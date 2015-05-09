@@ -8,4 +8,7 @@
     <string name="action_view_mode_aspect_fill">Aspect Fill</string>
     <string name="action_view_mode_aspect_fit">Aspect Fit</string>
     <string name="action_view_mode_fit_width">Fit Width</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 </resources>

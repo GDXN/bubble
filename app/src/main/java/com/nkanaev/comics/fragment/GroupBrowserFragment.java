@@ -56,9 +56,6 @@ public class GroupBrowserFragment extends Fragment {
         int numColumns = Math.round((float)deviceWidth / columnWidth);
         gridView.setNumColumns(numColumns);
 
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
-
         final MainActivity.OnRefreshListener listener = new MainActivity.OnRefreshListener() {
             @Override
             public void onRefreshStart() {
