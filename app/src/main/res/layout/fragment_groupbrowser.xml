@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_groupbrowser_container"
+        android:background="@color/background">
+
+    <GridView
+            android:id="@+id/groupGridView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:horizontalSpacing="@dimen/grid_margin"
+            android:verticalSpacing="@dimen/grid_margin"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:padding="@dimen/grid_margin"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            android:drawSelectorOnTop="true"/>
+
+        <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:visibility="invisible"/>
+
+</FrameLayout>

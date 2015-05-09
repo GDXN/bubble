@@ -1,0 +1,33 @@
+apply plugin: 'com.android.application'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.0.2"
+
+    defaultConfig {
+        applicationId "com.nkanaev.comics"
+        minSdkVersion 16
+        targetSdkVersion 21
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:cardview-v7:21.0.0'
+    compile 'com.github.junrar:junrar:0.7'
+    compile 'com.squareup.picasso:picasso:2.4.0'
+}

@@ -1,0 +1,115 @@
+package com.nkanaev.comics.fragment;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+
+import com.nkanaev.comics.R;
+import com.nkanaev.comics.activity.MainActivity;
+import com.nkanaev.comics.managers.AlphanumComparator;
+import com.nkanaev.comics.managers.LocalCoverHandler;
+import com.nkanaev.comics.managers.Utils;
+import com.nkanaev.comics.model.Comic;
+import com.nkanaev.comics.model.Storage;
+import com.nkanaev.comics.view.CoverImageView;
+
+public class BrowserFragment extends Fragment {
+    private ArrayList<Comic> mComics;
+    private String mPath;
+    private final static String STATE_PATH = "browserCurrentPath";
+
+    public static BrowserFragment create(String path) {
+        BrowserFragment fragment = new BrowserFragment();
+        Bundle args = new Bundle();
+        args.putString(STATE_PATH, path);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public BrowserFragment() {}
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        mPath = getArguments().getString(STATE_PATH);
+
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_browser, container, false);
+
+        mComics = Storage.getStorage(getActivity()).listComics(mPath);
+        Collections.sort(mComics, new AlphanumComparator());
+
+        GridView gridView = (GridView)view.findViewById(R.id.gridView);
+        gridView.setAdapter(new BrowserAdapter());
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Comic comic = mComics.get(position);
+                ReaderFragment readerFragment = ReaderFragment.create(comic.getId());
+                MainActivity activity = (MainActivity)getActivity();
+                activity.pushFragment(readerFragment, true);
+            }
+        });
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        int deviceWidth = Utils.getDeviceWidth(getActivity());
+        int columnWidth = getActivity().getResources().getInteger(R.integer.grid_comic_column_width);
+        int numColumns = Math.round((float)deviceWidth / columnWidth);
+        gridView.setNumColumns(numColumns);
+
+        return view;
+    }
+
+    private final class BrowserAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return mComics.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mComics.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewGroup comicView = (ViewGroup)convertView;
+            if (comicView == null) {
+                comicView = (ViewGroup)getActivity()
+                        .getLayoutInflater()
+                        .inflate(R.layout.card_comic, parent, false);
+            }
+
+            Comic comic = mComics.get(position);
+
+            CoverImageView coverImageView = (CoverImageView)comicView.findViewById(R.id.comicImageView);
+            TextView titleTextView = (TextView)comicView.findViewById(R.id.comicTitleTextView);
+            TextView pagesTextView = (TextView)comicView.findViewById(R.id.comicPagerTextView);
+
+            titleTextView.setText(comic.getFile().getName());
+            pagesTextView.setText(Integer.toString(comic.getCurrentPage()) + '/' + Integer.toString(comic.getTotalPages()));
+
+            ((MainActivity)getActivity()).getPicasso()
+                    .load(LocalCoverHandler.getComicCoverUri(comic))
+                    .into(coverImageView);
+
+            return comicView;
+        }
+    }
+}
