@@ -1,7 +1,7 @@
 package com.nkanaev.comics.activity;
 
-import android.content.Context;
 import android.content.res.Configuration;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import com.nkanaev.comics.fragment.GroupBrowserFragment;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.managers.*;
@@ -23,12 +21,9 @@ import com.nkanaev.comics.managers.*;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 
 public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private Scanner mScanner = null;
     private OnRefreshListener mRefreshListener;
@@ -70,22 +65,10 @@ public class MainActivity extends ActionBarActivity {
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-
-        mDrawerList.setAdapter(new NavigationItemAdapter(this, getNavigationItems()));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         getSupportActionBar().setElevation(8);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private ArrayList<NavigationItem> getNavigationItems() {
-        ArrayList<NavigationItem> x = new ArrayList<NavigationItem>();
-        x.add(new NavigationItem("stuff", 0));
-        x.add(new NavigationItem("other stuff", 1));
-        return x;
     }
 
     @Override
@@ -142,13 +125,13 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void pushFragment(Fragment fragment, boolean allow_back) {
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_frame, fragment);
-        if (allow_back) {
-            transaction = transaction.addToBackStack(((Object)fragment).getClass().getSimpleName());
-        }
-        transaction.commit();
+//        FragmentTransaction transaction = getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.content_frame, fragment);
+//        if (allow_back) {
+//            transaction = transaction.addToBackStack(((Object)fragment).getClass().getSimpleName());
+//        }
+//        transaction.commit();
     }
 
     public void popLastFragment() {
@@ -164,19 +147,17 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        popLastFragment();
+        mDrawerLayout.closeDrawers();
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        popLastFragment();
-        return super.onSupportNavigateUp();
-    }
-
-    private final class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawers();
         }
+        else {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+        return super.onSupportNavigateUp();
     }
 }

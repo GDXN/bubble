@@ -8,6 +8,8 @@
     
     <dimen name="navigation_horizontal_padding">16dp</dimen>
     <dimen name="navigation_item_height">48dp</dimen>
-    <dimen name="navigation_width">300dp</dimen>
+    <dimen name="navigation_width">320dp</dimen>
     <dimen name="navigation_title_size">14sp</dimen>
+    <dimen name="navigation_title_left_margin">24dp</dimen>
+    <dimen name="navigation_icon_size">24dp</dimen>
 </resources>
