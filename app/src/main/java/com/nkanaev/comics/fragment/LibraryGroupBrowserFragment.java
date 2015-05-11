@@ -20,12 +20,12 @@ import com.nkanaev.comics.model.Storage;
 import com.nkanaev.comics.view.CoverImageView;
 
 
-public class GroupBrowserFragment extends Fragment {
+public class LibraryGroupBrowserFragment extends Fragment {
     private ArrayList<Comic> mComics;
     private File[] mDirs;
     private HashMap<File, ArrayList<Comic>> mGroups;
 
-    public GroupBrowserFragment() {}
+    public LibraryGroupBrowserFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,9 +55,6 @@ public class GroupBrowserFragment extends Fragment {
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_group_column_width);
         int numColumns = Math.round((float)deviceWidth / columnWidth);
         gridView.setNumColumns(numColumns);
-
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
 
         final MainActivity.OnRefreshListener listener = new MainActivity.OnRefreshListener() {
             @Override

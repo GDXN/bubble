@@ -1,7 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<android.support.v4.widget.DrawerLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+        android:id="@+id/drawer_layout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/main_layout"/>
+        android:layout_height="fill_parent">
+
+        <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        <com.nkanaev.comics.view.MenuLayout
+                android:id="@+id/navigation_layout"
+                android:layout_width="@dimen/navigation_width"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="start"
+                android:background="@color/light">
+
+                <ImageView
+                        android:id="@+id/navigation_top_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:background="@color/text"
+                        android:layout_alignParentTop="true"/>
+
+                <ListView
+                        android:id="@+id/navigation_listview_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:choiceMode="singleChoice"
+                        android:divider="@android:color/transparent"
+                        android:dividerHeight="0dp"
+                        android:layout_below="@id/navigation_top_image"/>
+
+                <ListView
+                        android:id="@+id/navigation_listview_bottom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"/>
+
+        </com.nkanaev.comics.view.MenuLayout>
+
+</android.support.v4.widget.DrawerLayout>
