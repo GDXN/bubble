@@ -2,116 +2,156 @@ package com.nkanaev.comics.fragment;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import android.net.Uri;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.os.Environment;
 import android.view.*;
 import android.widget.*;
 import android.support.v4.app.Fragment;
 
+import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.activity.MainActivity;
 import com.nkanaev.comics.managers.LocalCoverHandler;
+import com.nkanaev.comics.managers.Scanner;
 import com.nkanaev.comics.managers.Utils;
 import com.nkanaev.comics.model.Comic;
 import com.nkanaev.comics.model.Storage;
-import com.nkanaev.comics.view.CoverImageView;
+import com.nkanaev.comics.view.DirectorySelectDialog;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 
 
-public class LibraryGroupBrowserFragment extends Fragment {
+public class LibraryGroupBrowserFragment extends Fragment implements DirectorySelectDialog.OnDirectorySelectListener {
+    private final static String BUNDLE_DIRECTORY_DIALOG_SHOWN = "BUNDLE_DIRECTORY_DIALOG_SHOWN";
+
     private ArrayList<Comic> mComics;
-    private File[] mDirs;
-    private HashMap<File, ArrayList<Comic>> mGroups;
+    private DirectorySelectDialog mDirectorySelectDialog;
+    private View mFirstLaunchView;
+    private GridView mGridView;
+    private Scanner mScanner;
+    private ProgressBar mProgressBar;
+    private Picasso mPicasso;
+
+    private boolean mFirstLaunch = false;
 
     public LibraryGroupBrowserFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+
+        Context ctx = getActivity();
+        mPicasso = new Picasso.Builder(ctx)
+                .addRequestHandler(new LocalCoverHandler(ctx))
+                .build();
+
+        mComics = Storage.getStorage(getActivity()).listDirectoryComics();
+        if (mComics.size() == 0) {
+            SharedPreferences preferences = getActivity()
+                    .getSharedPreferences(Constants.SETTINGS_NAME, 0);
+            mFirstLaunch = !preferences.contains(Constants.SETTINGS_LIBRARY_DIR);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final MainActivity activity = (MainActivity)getActivity();
         final View view = inflater.inflate(R.layout.fragment_groupbrowser, container, false);
 
-        getLibrary();
-
-        final GridView gridView = (GridView)view.findViewById(R.id.groupGridView);
-        final ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
-        gridView.setAdapter(new GroupBrowserAdapter());
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView = (GridView) view.findViewById(R.id.groupGridView);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        mGridView.setAdapter(new GroupBrowserAdapter());
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String path = mDirs[position].getAbsolutePath();
-                BrowserFragment browserFragment = BrowserFragment.create(path);
-                activity.pushFragment(browserFragment, true);
+                // todo: switch to comics list activity
             }
         });
         int deviceWidth = Utils.getDeviceWidth(getActivity());
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_group_column_width);
         int numColumns = Math.round((float)deviceWidth / columnWidth);
-        gridView.setNumColumns(numColumns);
+        mGridView.setNumColumns(numColumns);
 
-        final MainActivity.OnRefreshListener listener = new MainActivity.OnRefreshListener() {
-            @Override
-            public void onRefreshStart() {
-                gridView.setVisibility(View.INVISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
+        if (mFirstLaunch) {
+            mFirstLaunchView = inflater.inflate(R.layout.library_firstlaunch, (ViewGroup) view, true);
+            mDirectorySelectDialog = new DirectorySelectDialog(getActivity());
+            mDirectorySelectDialog.setCurrentDirectory(Environment.getExternalStorageDirectory());
+            mDirectorySelectDialog.setOnDirectorySelectListener(this);
+
+            if (savedInstanceState != null && savedInstanceState.getBoolean(BUNDLE_DIRECTORY_DIALOG_SHOWN)) {
+                mDirectorySelectDialog.show();
             }
 
-            @Override
-            public void onRefreshEnd() {
-                gridView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.INVISIBLE);
-
-                getLibrary();
-                GroupBrowserAdapter adapter = (GroupBrowserAdapter)gridView.getAdapter();
-                adapter.notifyDataSetChanged();
-            }
-        };
-        activity.setOnRefreshListener(listener);
+            Button selectButton = (Button) mFirstLaunchView.findViewById(R.id.choose_dir_button);
+            selectButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDirectorySelectDialog.show();
+                }
+            });
+        }
 
         return view;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.browser, menu);
+    public void onDirectorySelect(File file) {
+        SharedPreferences preferences = getActivity()
+                .getSharedPreferences(Constants.SETTINGS_NAME, 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.SETTINGS_LIBRARY_DIR, file.getAbsolutePath());
+        editor.apply();
+
+        refreshLibrary(file);
     }
 
-    private void getLibrary() {
-        MainActivity activity = (MainActivity)getActivity();
-        mComics = Storage.getStorage(getActivity()).listComics();
-        mGroups = new HashMap<File, ArrayList<Comic>>();
-        for (Comic c : mComics) {
-            File dir = c.getFile().getParentFile();
+    private void refreshLibrary(File file) {
 
-            ArrayList<Comic> group = null;
-            if (mGroups.containsKey(dir)) {
-                group = mGroups.get(dir);
-            }
-            else {
-                group = new ArrayList<Comic>();
-                mGroups.put(dir, group);
-            }
-            group.add(c);
+        if (mScanner == null || mScanner.getStatus() == AsyncTask.Status.FINISHED) {
+
+            mScanner = new Scanner(Storage.getStorage(getActivity())) {
+                @Override
+                protected void onPreExecute() {
+//                    if (mFirstLaunchView != null) {
+//                        ((ViewGroup)mFirstLaunchView.getParent()).removeView(mFirstLaunchView);
+//                        mFirstLaunchView = null;
+//                    }
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mComics = new ArrayList<>();
+                    mGridView.requestLayout();
+                }
+
+                @Override
+                protected void onPostExecute(Long aLong) {
+                    ((ViewGroup)mProgressBar.getParent()).removeView(mProgressBar);
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    mComics = Storage.getStorage(getActivity()).listDirectoryComics();
+                    mGridView.requestLayout();
+                }
+            };
+            mScanner.execute(file);
         }
-        mDirs = mGroups.keySet().toArray(new File[mGroups.size()]);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(BUNDLE_DIRECTORY_DIALOG_SHOWN,
+                (mDirectorySelectDialog != null) && mDirectorySelectDialog.isShowing());
+        super.onSaveInstanceState(outState);
     }
 
     private final class GroupBrowserAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return (mDirs != null) ? mDirs.length : 0;
+            return mComics.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mDirs[position];
+            return mComics.get(position);
         }
 
         @Override
@@ -121,8 +161,7 @@ public class LibraryGroupBrowserFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            File groupDir = mDirs[position];
-            Comic comic = mGroups.get(groupDir).get(0);
+            Comic comic = mComics.get(position);
 
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.card_group, parent, false);
@@ -130,12 +169,11 @@ public class LibraryGroupBrowserFragment extends Fragment {
 
             ImageView groupImageView = (ImageView)convertView.findViewById(R.id.card_group_imageview);
 
-            ((MainActivity)getActivity()).getPicasso()
-                    .load(LocalCoverHandler.getComicCoverUri(comic))
+            mPicasso.load(LocalCoverHandler.getComicCoverUri(comic))
                     .into(groupImageView);
 
-            TextView tv = (TextView)convertView.findViewById(R.id.comic_group_folder);
-            tv.setText(groupDir.getName());
+            TextView tv = (TextView) convertView.findViewById(R.id.comic_group_folder);
+            tv.setText(comic.getFile().getParentFile().getName());
 
             return convertView;
         }

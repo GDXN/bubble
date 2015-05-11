@@ -27,7 +27,7 @@ public class NavigationItemAdapter extends ArrayAdapter<NavigationItem> {
     public View getView(int position, View convertView, ViewGroup parent) {
         NavigationItem item = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.navigation_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_menu, parent, false);
         }
 
         TextView title = (TextView) convertView.findViewById(R.id.navigation_title);

@@ -5,20 +5,15 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import android.os.AsyncTask;
-import android.content.Context;
 import com.nkanaev.comics.model.*;
 import com.nkanaev.comics.parsers.Parser;
 import com.nkanaev.comics.parsers.ParserBuilder;
 
 public class Scanner extends AsyncTask<File, Integer, Long> {
+    private Storage mStorage;
 
-    private Context mContext;
-//    private Bookshelf mBookshelf;
-    private LocalUpdater mUpdater;
-
-    public Scanner(Context context) {
-        mContext = context;
-        mUpdater = new LocalUpdater(Storage.getStorage(context));
+    public Scanner(Storage storage) {
+        mStorage = storage;
     }
 
     @Override
@@ -26,8 +21,10 @@ public class Scanner extends AsyncTask<File, Integer, Long> {
         File rootDir = rootDirs[0];
         long result = 0;
 
-        Deque<File> files = new ArrayDeque<File>();
+        Deque<File> files = new ArrayDeque<>();
         files.push(rootDir);
+
+        mStorage.clearStorage();
 
         while (!files.isEmpty()) {
             File f = files.pop();
@@ -42,11 +39,10 @@ public class Scanner extends AsyncTask<File, Integer, Long> {
                 }
 
                 if (parser.numPages() > 0) {
-                    mUpdater.addBook(file.getAbsolutePath(), parser.getType(), parser.numPages());
+                    mStorage.addBook(file, parser.getType(), parser.numPages());
                 }
             }
         }
-        mUpdater.commit();
 
         return result;
     }

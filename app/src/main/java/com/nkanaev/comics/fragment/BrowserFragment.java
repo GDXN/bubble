@@ -57,7 +57,6 @@ public class BrowserFragment extends Fragment {
                 Comic comic = mComics.get(position);
                 ReaderFragment readerFragment = ReaderFragment.create(comic.getId());
                 MainActivity activity = (MainActivity)getActivity();
-                activity.pushFragment(readerFragment, true);
             }
         });
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();

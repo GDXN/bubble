@@ -12,4 +12,9 @@
     <dimen name="navigation_title_size">14sp</dimen>
     <dimen name="navigation_title_left_margin">24dp</dimen>
     <dimen name="navigation_icon_size">24dp</dimen>
+
+    <dimen name="button_horizontal_padding">8dp</dimen>
+    <dimen name="button_horizontal_margin">4dp</dimen>
+
+    <dimen name="dialog_directory_row_height">48dp</dimen>
 </resources>

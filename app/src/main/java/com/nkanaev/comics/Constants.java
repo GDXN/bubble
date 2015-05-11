@@ -5,6 +5,7 @@ public class Constants {
     public final int COVER_THUMBNAIL_WIDTH = 200;
 
     public static final String SETTINGS_NAME = "SETTINGS_COMICS";
+    public static final String SETTINGS_LIBRARY_DIR = "SETTINGS_LIBRARY_DIR";
 
     public static final String SETTINGS_PAGE_VIEW_MODE = "SETTINGS_PAGE_VIEW_MODE";
 

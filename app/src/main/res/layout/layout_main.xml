@@ -32,15 +32,16 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:choiceMode="singleChoice"
-                        android:divider="@android:color/transparent"
-                        android:dividerHeight="0dp"
-                        android:layout_below="@id/navigation_top_image"/>
+                        android:divider="@null"
+                        android:layout_below="@id/navigation_top_image"
+                        android:drawSelectorOnTop="true"/>
 
                 <ListView
                         android:id="@+id/navigation_listview_bottom"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"/>
+                        android:layout_alignParentBottom="true"
+                        android:drawSelectorOnTop="true"/>
 
         </com.nkanaev.comics.view.MenuLayout>
 

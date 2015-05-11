@@ -9,15 +9,16 @@ public class Comic {
     private int mCurrentPage;
     private int mNumPages;
     private int mId;
-    private String mFilePath;
     private String mType;
+    private File mFile;
 
-    public Comic(Storage shelf, int id, String filepath, String type, int numPages, int currentPage) {
+    public Comic(Storage shelf, int id, String filepath, String filename,
+                 String type, int numPages, int currentPage) {
         mShelf = shelf;
         mId = id;
         mNumPages = numPages;
         mCurrentPage = currentPage;
-        mFilePath = filepath;
+        mFile = new File(filepath, filename);
         mType = type;
     }
 
@@ -25,17 +26,8 @@ public class Comic {
         return mId;
     }
 
-    public Uri getPageUri(int pageNum) {
-        return new Uri.Builder()
-                .scheme(mType)
-                .authority("/")
-                .path(mFilePath)
-                .fragment(Integer.toString(pageNum))
-                .build();
-    }
-
     public File getFile() {
-        return new File(mFilePath);
+        return mFile;
     }
 
     public int getCurrentPage() {

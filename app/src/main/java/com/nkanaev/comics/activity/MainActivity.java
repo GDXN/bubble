@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.MenuItem;
 import com.nkanaev.comics.fragment.DirectoryBrowserFragment;
 import com.nkanaev.comics.fragment.LibraryGroupBrowserFragment;
 import com.nkanaev.comics.R;
@@ -23,30 +22,16 @@ import com.squareup.picasso.Picasso;
 public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private Scanner mScanner = null;
-    private OnRefreshListener mRefreshListener;
     private Picasso mPicasso;
-
-    public interface OnRefreshListener {
-        void onRefreshStart();
-        void onRefreshEnd();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (mPicasso == null) {
-            mPicasso = new Picasso.Builder(this)
-                    .addRequestHandler(new LocalCoverHandler(this))
-                    .memoryCache(new LruCache(Utils.calculateMemorySize(this, 10)))
-                    .build();
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main);
 
         if (savedInstanceState == null) {
             LibraryGroupBrowserFragment groupBrowserFragment = new LibraryGroupBrowserFragment();
-            pushFragment(groupBrowserFragment, false);
+            setFragment(groupBrowserFragment);
         }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -89,58 +74,11 @@ public class MainActivity extends ActionBarActivity {
         return mPicasso;
     }
 
-    public void setOnRefreshListener(OnRefreshListener listener) {
-        mRefreshListener = listener;
-    }
-
-    private void refreshLibrary() {
-        if (mScanner == null || mScanner.getStatus() == AsyncTask.Status.FINISHED) {
-
-            mScanner = new Scanner(this) {
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    mRefreshListener.onRefreshStart();
-                }
-
-                @Override
-                protected void onPostExecute(Long aLong) {
-                    super.onPostExecute(aLong);
-                    mRefreshListener.onRefreshEnd();
-                }
-            };
-            mScanner.execute(Environment.getExternalStorageDirectory());
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                refreshLibrary();
-                break;
-            case R.id.action_settings:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void setFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
-    }
-
-    public void pushFragment(Fragment fragment, boolean allow_back) {
-//        FragmentTransaction transaction = getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.content_frame, fragment);
-//        if (allow_back) {
-//            transaction = transaction.addToBackStack(((Object)fragment).getClass().getSimpleName());
-//        }
-//        transaction.commit();
     }
 
     @Override
