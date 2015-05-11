@@ -3,21 +3,19 @@ package com.nkanaev.comics.activity;
 import android.content.res.Configuration;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
-import android.view.View;
-import com.nkanaev.comics.fragment.GroupBrowserFragment;
+import com.nkanaev.comics.fragment.DirectoryBrowserFragment;
+import com.nkanaev.comics.fragment.LibraryGroupBrowserFragment;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.managers.*;
 
+import com.nkanaev.comics.view.MenuLayout;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
@@ -47,21 +45,25 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.layout_main);
 
         if (savedInstanceState == null) {
-            GroupBrowserFragment groupBrowserFragment = new GroupBrowserFragment();
+            LibraryGroupBrowserFragment groupBrowserFragment = new LibraryGroupBrowserFragment();
             pushFragment(groupBrowserFragment, false);
         }
 
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
-
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+        MenuLayout menuLayout = (MenuLayout) findViewById(R.id.navigation_layout);
+        menuLayout.setOnMenuItemSelectListener(new MenuLayout.OnMenuItemSelectListener() {
+            @Override
+            public void onMenuItemSelected(int resStringRef) {
+                if (resStringRef == R.string.menu_browser) {
+                    setFragment(new DirectoryBrowserFragment());
+                }
+                else if (resStringRef == R.string.menu_library) {
+                    setFragment(new LibraryGroupBrowserFragment());
+                }
+                mDrawerLayout.closeDrawers();
             }
-
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-        };
+        });
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
@@ -124,6 +126,13 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void setFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+    }
+
     public void pushFragment(Fragment fragment, boolean allow_back) {
 //        FragmentTransaction transaction = getSupportFragmentManager()
 //                .beginTransaction()
@@ -132,17 +141,6 @@ public class MainActivity extends ActionBarActivity {
 //            transaction = transaction.addToBackStack(((Object)fragment).getClass().getSimpleName());
 //        }
 //        transaction.commit();
-    }
-
-    public void popLastFragment() {
-        FragmentManager manager = getSupportFragmentManager();
-        manager.popBackStack();
-        if (manager.getBackStackEntryCount() == 1) {
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(false);
-            }
-        }
     }
 
     @Override

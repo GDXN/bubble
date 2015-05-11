@@ -19,6 +19,11 @@ public class NavigationItemAdapter extends ArrayAdapter<NavigationItem> {
     }
 
     @Override
+    public long getItemId(int position) {
+        return getItem(position).titleResource;
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         NavigationItem item = getItem(position);
         if (convertView == null) {

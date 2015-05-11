@@ -12,6 +12,7 @@
                 android:layout_height="match_parent"/>
 
         <com.nkanaev.comics.view.MenuLayout
+                android:id="@+id/navigation_layout"
                 android:layout_width="@dimen/navigation_width"
                 android:layout_height="match_parent"
                 android:orientation="vertical"

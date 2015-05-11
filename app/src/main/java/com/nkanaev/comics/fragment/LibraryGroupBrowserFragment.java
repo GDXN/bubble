@@ -20,12 +20,12 @@ import com.nkanaev.comics.model.Storage;
 import com.nkanaev.comics.view.CoverImageView;
 
 
-public class GroupBrowserFragment extends Fragment {
+public class LibraryGroupBrowserFragment extends Fragment {
     private ArrayList<Comic> mComics;
     private File[] mDirs;
     private HashMap<File, ArrayList<Comic>> mGroups;
 
-    public GroupBrowserFragment() {}
+    public LibraryGroupBrowserFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

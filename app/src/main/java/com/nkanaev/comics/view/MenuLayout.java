@@ -17,6 +17,11 @@ import java.util.List;
 public class MenuLayout extends RelativeLayout implements ListView.OnItemClickListener {
     private ListView topListView;
     private ListView bottomListView;
+    private OnMenuItemSelectListener mListener;
+
+    public interface OnMenuItemSelectListener {
+        public void onMenuItemSelected(int resStringRef);
+    }
 
     public MenuLayout(Context context) {
         super(context);
@@ -31,6 +36,10 @@ public class MenuLayout extends RelativeLayout implements ListView.OnItemClickLi
         super.onAttachedToWindow();
 
         setMenuItems();
+    }
+
+    public void setOnMenuItemSelectListener(OnMenuItemSelectListener listener) {
+        mListener = listener;
     }
 
     private void setMenuItems() {
@@ -60,6 +69,8 @@ public class MenuLayout extends RelativeLayout implements ListView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        if (mListener != null) {
+            mListener.onMenuItemSelected((int)id);
+        }
     }
 }
