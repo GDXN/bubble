@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- inherit from the material theme -->
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="android:actionBarStyle">@style/MyActionBarStyle</item>
         <item name="actionBarStyle">@style/MyActionBarStyle</item>

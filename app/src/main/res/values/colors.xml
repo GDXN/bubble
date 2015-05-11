@@ -4,8 +4,8 @@
 
     <!--color palette -->
     <color name="primary">#ffdb5162</color>
-    <color name="primaryDark">#4BA7DD</color>
-    <color name="accent">#4BA7DD</color>
+    <color name="primaryDark">#ffb35159</color>
+    <color name="accent">#ffef5162</color>
 
     <color name="light">#fff8f8f8</color>
     <color name="text">#ff353e4e</color>
