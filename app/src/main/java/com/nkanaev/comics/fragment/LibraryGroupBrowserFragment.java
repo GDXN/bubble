@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.v4.app.Fragment;
 
 import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.R;
+import com.nkanaev.comics.activity.BrowserActivity;
 import com.nkanaev.comics.activity.MainActivity;
 import com.nkanaev.comics.managers.LocalCoverHandler;
 import com.nkanaev.comics.managers.Scanner;
@@ -21,11 +23,11 @@ import com.nkanaev.comics.managers.Utils;
 import com.nkanaev.comics.model.Comic;
 import com.nkanaev.comics.model.Storage;
 import com.nkanaev.comics.view.DirectorySelectDialog;
-import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
 
-public class LibraryGroupBrowserFragment extends Fragment implements DirectorySelectDialog.OnDirectorySelectListener {
+public class LibraryGroupBrowserFragment extends Fragment
+        implements DirectorySelectDialog.OnDirectorySelectListener, AdapterView.OnItemClickListener {
     private final static String BUNDLE_DIRECTORY_DIALOG_SHOWN = "BUNDLE_DIRECTORY_DIALOG_SHOWN";
 
     private ArrayList<Comic> mComics;
@@ -58,21 +60,23 @@ public class LibraryGroupBrowserFragment extends Fragment implements DirectorySe
     }
 
     @Override
+    public void onDestroy() {
+        mPicasso.shutdown();
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_groupbrowser, container, false);
 
         mGridView = (GridView) view.findViewById(R.id.groupGridView);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mGridView.setAdapter(new GroupBrowserAdapter());
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // todo: switch to comics list activity
-            }
-        });
+        mGridView.setOnItemClickListener(this);
+
         int deviceWidth = Utils.getDeviceWidth(getActivity());
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_group_column_width);
-        int numColumns = Math.round((float)deviceWidth / columnWidth);
+        int numColumns = Math.round((float) deviceWidth / columnWidth);
         mGridView.setNumColumns(numColumns);
 
         if (mFirstLaunch) {
@@ -106,6 +110,15 @@ public class LibraryGroupBrowserFragment extends Fragment implements DirectorySe
         editor.apply();
 
         refreshLibrary(file);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Comic comic = mComics.get(position);
+
+        Intent intent = new Intent(getActivity(), BrowserActivity.class);
+        intent.putExtra(BrowserActivity.DIRECTORY, comic.getFile().getParent());
+        startActivity(intent);
     }
 
     private void refreshLibrary(File file) {

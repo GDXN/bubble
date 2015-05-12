@@ -3,6 +3,7 @@ package com.nkanaev.comics.fragment;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -13,16 +14,17 @@ import android.widget.*;
 
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.activity.MainActivity;
-import com.nkanaev.comics.managers.AlphanumComparator;
 import com.nkanaev.comics.managers.LocalCoverHandler;
 import com.nkanaev.comics.managers.Utils;
 import com.nkanaev.comics.model.Comic;
 import com.nkanaev.comics.model.Storage;
 import com.nkanaev.comics.view.CoverImageView;
+import com.squareup.picasso.Picasso;
 
 public class BrowserFragment extends Fragment {
     private ArrayList<Comic> mComics;
     private String mPath;
+    private Picasso mPicasso;
     private final static String STATE_PATH = "browserCurrentPath";
 
     public static BrowserFragment create(String path) {
@@ -37,17 +39,27 @@ public class BrowserFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         mPath = getArguments().getString(STATE_PATH);
 
-        super.onCreate(savedInstanceState);
+        mComics = Storage.getStorage(getActivity()).listComics(mPath);
+        Collections.sort(mComics);
+        Context ctx = getActivity();
+        mPicasso = new Picasso.Builder(ctx)
+                .addRequestHandler(new LocalCoverHandler(ctx))
+                .build();
+    }
+
+    @Override
+    public void onDestroy() {
+        mPicasso.shutdown();
+        super.onDestroy();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_browser, container, false);
-
-        mComics = Storage.getStorage(getActivity()).listComics(mPath);
-        Collections.sort(mComics, new AlphanumComparator());
 
         GridView gridView = (GridView)view.findViewById(R.id.gridView);
         gridView.setAdapter(new BrowserAdapter());
@@ -56,11 +68,9 @@ public class BrowserFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Comic comic = mComics.get(position);
                 ReaderFragment readerFragment = ReaderFragment.create(comic.getId());
-                MainActivity activity = (MainActivity)getActivity();
+                MainActivity activity = (MainActivity) getActivity();
             }
         });
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
         int deviceWidth = Utils.getDeviceWidth(getActivity());
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_comic_column_width);
@@ -88,7 +98,7 @@ public class BrowserFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewGroup comicView = (ViewGroup)convertView;
+            ViewGroup comicView = (ViewGroup) convertView;
             if (comicView == null) {
                 comicView = (ViewGroup)getActivity()
                         .getLayoutInflater()
@@ -104,8 +114,7 @@ public class BrowserFragment extends Fragment {
             titleTextView.setText(comic.getFile().getName());
             pagesTextView.setText(Integer.toString(comic.getCurrentPage()) + '/' + Integer.toString(comic.getTotalPages()));
 
-            ((MainActivity)getActivity()).getPicasso()
-                    .load(LocalCoverHandler.getComicCoverUri(comic))
+            mPicasso.load(LocalCoverHandler.getComicCoverUri(comic))
                     .into(coverImageView);
 
             return comicView;

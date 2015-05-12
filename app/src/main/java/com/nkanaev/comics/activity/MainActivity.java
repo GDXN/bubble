@@ -6,23 +6,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import com.nkanaev.comics.fragment.DirectoryBrowserFragment;
 import com.nkanaev.comics.fragment.LibraryGroupBrowserFragment;
 import com.nkanaev.comics.R;
-import com.nkanaev.comics.managers.*;
 
 import com.nkanaev.comics.view.MenuLayout;
-import com.squareup.picasso.LruCache;
-import com.squareup.picasso.Picasso;
 
 
 public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private Picasso mPicasso;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,10 +62,6 @@ public class MainActivity extends ActionBarActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    public Picasso getPicasso() {
-        return mPicasso;
     }
 
     private void setFragment(Fragment fragment) {

@@ -4,7 +4,7 @@ import java.io.File;
 import android.net.Uri;
 
 
-public class Comic {
+public class Comic implements Comparable {
     private Storage mShelf;
     private int mCurrentPage;
     private int mNumPages;
@@ -45,5 +45,9 @@ public class Comic {
 
     public String getType() {
         return mType;
+    }
+
+    public int compareTo(Object another) {
+        return mFile.compareTo(((Comic) another).getFile());
     }
 }
