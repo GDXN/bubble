@@ -20,7 +20,7 @@
             android:focusable="false"
             android:padding="@dimen/grid_margin"
             android:clipToPadding="false"
-            android:scrollbarStyle="outsideOverlay"
+            android:scrollbarStyle="insideInset"
             android:drawSelectorOnTop="true"/>
 
         <ProgressBar

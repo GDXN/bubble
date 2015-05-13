@@ -17,4 +17,8 @@
     <dimen name="button_horizontal_margin">4dp</dimen>
 
     <dimen name="dialog_directory_row_height">48dp</dimen>
+
+    <dimen name="card_text">18sp</dimen>
+    <dimen name="card_subtext">14sp</dimen>
+    <dimen name="card_padding">8dp</dimen>
 </resources>

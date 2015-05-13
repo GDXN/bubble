@@ -13,4 +13,7 @@
     <color name="background">#ffe9e9ea</color>
 
     <color name="dark_semitransparent">#64000000</color>
+
+    <color name="card_text">#000</color>
+    <color name="card_subtext">#444</color>
 </resources>
