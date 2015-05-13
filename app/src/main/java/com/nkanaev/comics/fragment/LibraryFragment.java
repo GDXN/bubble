@@ -26,7 +26,7 @@ import com.nkanaev.comics.view.DirectorySelectDialog;
 import com.squareup.picasso.Picasso;
 
 
-public class LibraryGroupBrowserFragment extends Fragment
+public class LibraryFragment extends Fragment
         implements DirectorySelectDialog.OnDirectorySelectListener, AdapterView.OnItemClickListener {
     private final static String BUNDLE_DIRECTORY_DIALOG_SHOWN = "BUNDLE_DIRECTORY_DIALOG_SHOWN";
 
@@ -40,7 +40,7 @@ public class LibraryGroupBrowserFragment extends Fragment
 
     private boolean mFirstLaunch = false;
 
-    public LibraryGroupBrowserFragment() {}
+    public LibraryFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

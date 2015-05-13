@@ -128,9 +128,6 @@ public class ReaderFragment extends Fragment {
         mViewPager.setCurrentItem(mComic.getCurrentPage() - 1);
         setFullscreen(true);
 
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
         return view;
     }
 
@@ -149,13 +146,6 @@ public class ReaderFragment extends Fragment {
             e.printStackTrace();
         }
         mPicasso.shutdown();
-        if (Utils.isLollipopOrLater()) {
-            Window w = getActivity().getWindow();
-            w.setStatusBarColor(getActivity().getResources().getColor(R.color.primaryDark));
-        }
-        int primaryColor = getActivity().getResources().getColor(R.color.primary);
-        ColorDrawable drawable = new ColorDrawable(primaryColor);
-        getActionBar().setBackgroundDrawable(drawable);
         super.onDestroy();
     }
 

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.nkanaev.comics.R;
 
 
-public class DirectoryBrowserFragment extends Fragment {
+public class DirectoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_directorybrowser, container, false);

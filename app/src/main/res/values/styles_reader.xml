@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ReaderTheme" parent="AppTheme">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
+
+        <item name="android:actionBarStyle">@style/ReaderActionBar</item>
+        <item name="actionBarStyle">@style/ReaderActionBar</item>
+    </style>
+
+    <style name="ReaderActionBar" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/dark_semitransparent</item>
+        <item name="background">@color/dark_semitransparent</item>
+    </style>
+</resources>

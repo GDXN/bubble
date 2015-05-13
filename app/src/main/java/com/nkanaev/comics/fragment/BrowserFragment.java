@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -14,6 +15,7 @@ import android.widget.*;
 
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.activity.MainActivity;
+import com.nkanaev.comics.activity.ReaderActivity;
 import com.nkanaev.comics.managers.LocalCoverHandler;
 import com.nkanaev.comics.managers.Utils;
 import com.nkanaev.comics.model.Comic;
@@ -21,7 +23,7 @@ import com.nkanaev.comics.model.Storage;
 import com.nkanaev.comics.view.CoverImageView;
 import com.squareup.picasso.Picasso;
 
-public class BrowserFragment extends Fragment {
+public class BrowserFragment extends Fragment implements AdapterView.OnItemClickListener {
     private ArrayList<Comic> mComics;
     private String mPath;
     private Picasso mPicasso;
@@ -63,14 +65,7 @@ public class BrowserFragment extends Fragment {
 
         GridView gridView = (GridView)view.findViewById(R.id.gridView);
         gridView.setAdapter(new BrowserAdapter());
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Comic comic = mComics.get(position);
-                ReaderFragment readerFragment = ReaderFragment.create(comic.getId());
-                MainActivity activity = (MainActivity) getActivity();
-            }
-        });
+        gridView.setOnItemClickListener(this);
 
         int deviceWidth = Utils.getDeviceWidth(getActivity());
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_comic_column_width);
@@ -78,6 +73,14 @@ public class BrowserFragment extends Fragment {
         gridView.setNumColumns(numColumns);
 
         return view;
+    }
+
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Comic comic = mComics.get(position);
+
+        Intent intent = new Intent(getActivity(), ReaderActivity.class);
+        intent.putExtra(ReaderActivity.PARAM_COMIC_ID, comic.getId());
+        startActivity(intent);
     }
 
     private final class BrowserAdapter extends BaseAdapter {

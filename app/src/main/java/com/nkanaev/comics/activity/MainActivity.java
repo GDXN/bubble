@@ -7,8 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
-import com.nkanaev.comics.fragment.DirectoryBrowserFragment;
-import com.nkanaev.comics.fragment.LibraryGroupBrowserFragment;
+import com.nkanaev.comics.fragment.DirectoryFragment;
+import com.nkanaev.comics.fragment.LibraryFragment;
 import com.nkanaev.comics.R;
 
 import com.nkanaev.comics.view.MenuLayout;
@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.layout_main);
 
         if (savedInstanceState == null) {
-            LibraryGroupBrowserFragment groupBrowserFragment = new LibraryGroupBrowserFragment();
+            LibraryFragment groupBrowserFragment = new LibraryFragment();
             setFragment(groupBrowserFragment);
         }
 
@@ -35,10 +35,10 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onMenuItemSelected(int resStringRef) {
                 if (resStringRef == R.string.menu_browser) {
-                    setFragment(new DirectoryBrowserFragment());
+                    setFragment(new DirectoryFragment());
                 }
                 else if (resStringRef == R.string.menu_library) {
-                    setFragment(new LibraryGroupBrowserFragment());
+                    setFragment(new LibraryFragment());
                 }
                 mDrawerLayout.closeDrawers();
             }

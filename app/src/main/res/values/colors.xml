@@ -11,4 +11,6 @@
     <color name="text">#ff353e4e</color>
     <color name="dark">#ff161616</color>
     <color name="background">#ffe9e9ea</color>
+
+    <color name="dark_semitransparent">#64000000</color>
 </resources>

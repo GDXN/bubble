@@ -1,37 +1,36 @@
 package com.nkanaev.comics.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import com.nkanaev.comics.R;
-import com.nkanaev.comics.fragment.BrowserFragment;
+import com.nkanaev.comics.fragment.ReaderFragment;
+import com.squareup.picasso.Picasso;
 
 
-public class BrowserActivity extends ActionBarActivity {
-    public final static String DIRECTORY = "BROWSER_DIRECTORY";
+public class ReaderActivity extends ActionBarActivity {
+    public static final String PARAM_COMIC_ID = "PARAM_COMIC_ID";
+
+    private Picasso mPicasso;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.layout_browser);
-
-        Log.d("SimpleActivity", "OnCreate Started");
-        Intent intent = getIntent();
-        String path = intent.getStringExtra(DIRECTORY);
-        BrowserFragment fragment = BrowserFragment.create(path);
+        setContentView(R.layout.layout_reader);
 
         if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            int comicId = extras.getInt(PARAM_COMIC_ID);
+
+            ReaderFragment fragment = ReaderFragment.create(comicId);
+
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_frame_browser, fragment)
+                    .replace(R.id.content_frame_reader, fragment)
                     .commit();
         }
 
-        getSupportActionBar().setElevation(8);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
