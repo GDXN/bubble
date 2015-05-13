@@ -2,21 +2,19 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-            android:id="@+id/menuReaderAspectRatio"
-            android:title="@string/action_view_mode"
-            android:icon="@drawable/ic_aspect_ratio_white_24dp"
-            app:showAsAction="always">
+    <item android:id="@+id/menuReaderAspectRatio"
+          android:title="@string/action_view_mode"
+          android:icon="@drawable/ic_aspect_ratio_white_24dp"
+          app:showAsAction="always">
         <menu>
-            <item
-                    android:id="@+id/view_mode_aspect_fill"
-                    android:title="@string/action_view_mode_aspect_fill"/>
-            <item
-                    android:id="@+id/view_mode_aspect_fit"
-                    android:title="@string/action_view_mode_aspect_fit"/>
-            <item
-                    android:id="@+id/view_mode_fit_width"
-                    android:title="@string/action_view_mode_fit_width"/>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/view_mode_aspect_fill"
+                      android:title="@string/action_view_mode_aspect_fill"/>
+                <item android:id="@+id/view_mode_aspect_fit"
+                      android:title="@string/action_view_mode_aspect_fit"/>
+                <item android:id="@+id/view_mode_fit_width"
+                      android:title="@string/action_view_mode_fit_width"/>
+            </group>
         </menu>
     </item>
 </menu>

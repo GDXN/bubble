@@ -11,5 +11,10 @@
     <style name="ReaderActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:background">@color/dark_semitransparent</item>
         <item name="background">@color/dark_semitransparent</item>
+        <item name="android:itemTextAppearance">@style/ReaderMenuTextAppearance</item>
+    </style>
+
+    <style name="ReaderMenuTextAppearance" parent="@style/TextAppearance.AppCompat.Menu">
+        <item name="android:textColor">@color/light</item>
     </style>
 </resources>

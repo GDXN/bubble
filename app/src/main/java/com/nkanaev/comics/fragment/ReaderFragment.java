@@ -156,6 +156,18 @@ public class ReaderFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.reader, menu);
+
+        switch (mPageViewMode) {
+            case ASPECT_FILL:
+                menu.findItem(R.id.view_mode_aspect_fill).setChecked(true);
+                break;
+            case ASPECT_FIT:
+                menu.findItem(R.id.view_mode_aspect_fit).setChecked(true);
+                break;
+            case FIT_WIDTH:
+                menu.findItem(R.id.view_mode_fit_width).setChecked(true);
+                break;
+        }
     }
 
     @Override
@@ -179,6 +191,7 @@ public class ReaderFragment extends Fragment {
             case R.id.view_mode_aspect_fill:
             case R.id.view_mode_aspect_fit:
             case R.id.view_mode_fit_width:
+                item.setChecked(true);
                 mPageViewMode = RESOURCE_VIEW_MODE.get(item.getItemId());
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(Constants.SETTINGS_PAGE_VIEW_MODE, mPageViewMode.native_int);
