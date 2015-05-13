@@ -34,7 +34,7 @@ public class LocalCoverHandler extends RequestHandler {
     }
 
     @Override
-    public Result load(Request data) throws IOException {
+    public Result load(Request data, int networkPolicy) throws IOException {
         String path = getCoverPath(data.uri);
         return new Result(BitmapFactory.decodeFile(path), Picasso.LoadedFrom.DISK);
     }

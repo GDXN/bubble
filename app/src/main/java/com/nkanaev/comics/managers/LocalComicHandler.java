@@ -11,14 +11,15 @@ import com.squareup.picasso.RequestHandler;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.nkanaev.comics.model.Comic;
 
 public class LocalComicHandler extends RequestHandler {
     private final static String HANDLER_URI = "localcomic";
     private Parser mParser;
+    private int mSize;
 
-    public LocalComicHandler(Parser parser) {
+    public LocalComicHandler(Parser parser, int desiredSize) {
         mParser = parser;
+        mSize = desiredSize;
     }
 
     @Override
@@ -27,16 +28,14 @@ public class LocalComicHandler extends RequestHandler {
     }
 
     @Override
-    public Result load(Request request) throws IOException {
+    public Result load(Request request, int networkPolicy) throws IOException {
         int pageNum = Integer.parseInt(request.uri.getFragment());
         InputStream stream = mParser.getPage(pageNum);
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(stream, null, options);
-        if (request.targetWidth != 0) {
-            options.inSampleSize = Utils.calculateInSampleSize(options, request.targetWidth, request.targetHeight);
-        }
+        options.inSampleSize = Utils.calculateInSampleSize(options, mSize, mSize);
         options.inJustDecodeBounds = false;
         stream.close();
         stream = mParser.getPage(pageNum);

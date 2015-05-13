@@ -40,8 +40,7 @@ public class ReaderFragment extends Fragment {
     private SharedPreferences mPreferences;
     private PageImageView.OnPageTouchListener mPageTouchListener;
     private boolean mIsFullscreen;
-    private int mImageWidth;
-    private int mImageHeight;
+    private int mImageSize;
 
     static {
         RESOURCE_VIEW_MODE = new HashMap<Integer, Constants.PageViewMode>();
@@ -96,16 +95,17 @@ public class ReaderFragment extends Fragment {
                 mParser = new ParserBuilder(mComic.getFile()).buildForType(mComic.getType());
         }
 
-        mComicHandler = new LocalComicHandler(mParser);
+        int width = Utils.getDeviceWidth(getActivity());
+        int height = Utils.getDeviceHeight(getActivity());
+        mImageSize = Math.max(width, height) * 2;
+
+        mComicHandler = new LocalComicHandler(mParser, mImageSize);
 
         mPicasso = new Picasso.Builder(getActivity())
                 .memoryCache(new LruCache(Utils.calculateMemorySize(getActivity(), 10)))
                 .addRequestHandler(mComicHandler)
                 .build();
         mPicasso.setLoggingEnabled(true);
-
-        mImageWidth = Utils.getDeviceWidth(getActivity());
-        mImageHeight = Utils.getDeviceHeight(getActivity());
 
         mPagerAdapter = new ComicPagerAdapter();
 
@@ -211,7 +211,6 @@ public class ReaderFragment extends Fragment {
             container.addView(layout);
 
             mPicasso.load(mComicHandler.getPageUri(position))
-                    .resize(mImageWidth, mImageHeight)
                     .into(pageImageView, new MyCallback(pageImageView));
 
             return layout;
