@@ -9,6 +9,11 @@
     <string name="action_view_mode_aspect_fit">Aspect Fit</string>
     <string name="action_view_mode_fit_width">Fit Width</string>
 
+    <string name="menu_browser_filter">Filter</string>
+    <string name="menu_browser_filter_all">All</string>
+    <string name="menu_browser_filter_read">Read</string>
+    <string name="menu_browser_filter_unread">Unread</string>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
@@ -21,4 +26,8 @@
     <string name="directory_choose_message">test</string>
     <string name="directory_picker_confirm">Select</string>
     <string name="directory_picker_cancel">Cancel</string>
+
+    <string name="search">Search</string>
+
+    <string name="browser_search_hint">Please enter a search term</string>
 </resources>

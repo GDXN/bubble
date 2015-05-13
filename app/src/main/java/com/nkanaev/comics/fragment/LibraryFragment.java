@@ -80,10 +80,12 @@ public class LibraryFragment extends Fragment
         mGridView.setNumColumns(numColumns);
 
         if (mFirstLaunch) {
-            mFirstLaunchView = inflater.inflate(R.layout.library_firstlaunch, (ViewGroup) view, true);
+            mFirstLaunchView = inflater.inflate(R.layout.library_firstlaunch, (ViewGroup) view, false);
             mDirectorySelectDialog = new DirectorySelectDialog(getActivity());
             mDirectorySelectDialog.setCurrentDirectory(Environment.getExternalStorageDirectory());
             mDirectorySelectDialog.setOnDirectorySelectListener(this);
+
+            ((ViewGroup) view).addView(mFirstLaunchView);
 
             if (savedInstanceState != null && savedInstanceState.getBoolean(BUNDLE_DIRECTORY_DIALOG_SHOWN)) {
                 mDirectorySelectDialog.show();
@@ -128,10 +130,10 @@ public class LibraryFragment extends Fragment
             mScanner = new Scanner(Storage.getStorage(getActivity())) {
                 @Override
                 protected void onPreExecute() {
-//                    if (mFirstLaunchView != null) {
-//                        ((ViewGroup)mFirstLaunchView.getParent()).removeView(mFirstLaunchView);
-//                        mFirstLaunchView = null;
-//                    }
+                    if (mFirstLaunchView != null) {
+                        ((ViewGroup)mFirstLaunchView.getParent()).removeView(mFirstLaunchView);
+                        mFirstLaunchView = null;
+                    }
                     mProgressBar.setVisibility(View.VISIBLE);
                     mComics = new ArrayList<>();
                     mGridView.requestLayout();

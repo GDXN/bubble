@@ -6,10 +6,9 @@
     <uses-sdk android:minSdkVersion="16"
               android:targetSdkVersion="21"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <application
-            android:label="@string/app_name"
-            android:icon="@drawable/ic_launcher"
-            android:theme="@style/AppTheme">
+    <application android:label="@string/app_name"
+                 android:icon="@drawable/ic_launcher"
+                 android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity"
                   android:label="@string/app_name">
             <intent-filter>
@@ -17,24 +16,20 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.BrowserActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".activity.MainActivity">
+        <activity android:name=".activity.BrowserActivity"
+                  android:label="@string/app_name"
+                  android:parentActivityName=".activity.MainActivity">
 
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.nkanaev.comics.activity.MainActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                       android:value="com.nkanaev.comics.activity.MainActivity" />
         </activity>
-        <activity
-                android:name=".activity.ReaderActivity"
-                android:label="@string/app_name"
-                android:parentActivityName=".activity.BrowserActivity"
-                android:theme="@style/ReaderTheme">
+        <activity android:name=".activity.ReaderActivity"
+                  android:label="@string/app_name"
+                  android:parentActivityName=".activity.BrowserActivity"
+                  android:theme="@style/ReaderTheme">
 
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.nkanaev.comics.activity.BrowserActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                       android:value="com.nkanaev.comics.activity.BrowserActivity" />
         </activity>
     </application>
 </manifest>

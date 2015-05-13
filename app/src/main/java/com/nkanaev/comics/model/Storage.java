@@ -48,7 +48,7 @@ public class Storage {
                     + Book.COLUMN_NAME_FILEPATH + " TEXT,"
                     + Book.COLUMN_NAME_FILENAME + " TEXT,"
                     + Book.COLUMN_NAME_NUM_PAGES + " INTEGER,"
-                    + Book.COLUMN_NAME_CURRENT_PAGE + " INTEGER DEFAULT 1,"
+                    + Book.COLUMN_NAME_CURRENT_PAGE + " INTEGER DEFAULT 0,"
                     + Book.COLUMN_NAME_TYPE + " TEXT"
                     + ")";
             db.execSQL(sql);
