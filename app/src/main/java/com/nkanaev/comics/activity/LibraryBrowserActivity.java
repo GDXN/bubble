@@ -2,27 +2,26 @@ package com.nkanaev.comics.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import com.nkanaev.comics.R;
-import com.nkanaev.comics.fragment.BrowserFragment;
+import com.nkanaev.comics.fragment.LibraryBrowserFragment;
 
 
-public class BrowserActivity extends ActionBarActivity {
+public class LibraryBrowserActivity extends ActionBarActivity {
     public final static String DIRECTORY = "BROWSER_DIRECTORY";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.layout_browser);
+        setContentView(R.layout.layout_librarybrowser);
 
         Log.d("SimpleActivity", "OnCreate Started");
         Intent intent = getIntent();
         String path = intent.getStringExtra(DIRECTORY);
-        BrowserFragment fragment = BrowserFragment.create(path);
+        LibraryBrowserFragment fragment = LibraryBrowserFragment.create(path);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

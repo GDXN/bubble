@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
-import com.nkanaev.comics.fragment.DirectoryFragment;
+import com.nkanaev.comics.fragment.BrowserFragment;
 import com.nkanaev.comics.fragment.LibraryFragment;
 import com.nkanaev.comics.R;
 
@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity
     public void onMenuItemSelected(int resStringRef) {
         switch (resStringRef) {
             case R.string.menu_browser:
-                setFragment(new DirectoryFragment());
+                setFragment(new BrowserFragment());
                 break;
             case R.string.menu_library:
                 setFragment(new LibraryFragment());

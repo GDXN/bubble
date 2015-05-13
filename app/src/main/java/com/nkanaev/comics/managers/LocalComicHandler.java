@@ -15,11 +15,9 @@ import com.nkanaev.comics.model.Comic;
 
 public class LocalComicHandler extends RequestHandler {
     private final static String HANDLER_URI = "localcomic";
-    private Comic mComic;
     private Parser mParser;
 
-    public LocalComicHandler(Comic comic, Parser parser) {
-        mComic = comic;
+    public LocalComicHandler(Parser parser) {
         mParser = parser;
     }
 
@@ -47,11 +45,10 @@ public class LocalComicHandler extends RequestHandler {
         return new Result(result, Picasso.LoadedFrom.DISK);
     }
 
-    public Uri getComicPageUri(int pageNum) {
+    public Uri getPageUri(int pageNum) {
         return new Uri.Builder()
                 .scheme(HANDLER_URI)
                 .authority("")
-                .path(mComic.getFile().getAbsolutePath())
                 .fragment(Integer.toString(pageNum))
                 .build();
     }

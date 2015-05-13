@@ -72,6 +72,10 @@ public final class Utils {
         return filename.toLowerCase().matches(".*\\.(jpg|bmp|gif|png)$");
     }
 
+    public static boolean isArchive(String filename) {
+        return filename.toLowerCase().matches(".*\\.(zip|cbz|rar|cbr)$");
+    }
+
     public static int getDeviceWidth(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return Math.round(displayMetrics.widthPixels / displayMetrics.density);

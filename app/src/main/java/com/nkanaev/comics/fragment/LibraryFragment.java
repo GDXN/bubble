@@ -15,8 +15,7 @@ import android.support.v4.app.Fragment;
 
 import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.R;
-import com.nkanaev.comics.activity.BrowserActivity;
-import com.nkanaev.comics.activity.MainActivity;
+import com.nkanaev.comics.activity.LibraryBrowserActivity;
 import com.nkanaev.comics.managers.LocalCoverHandler;
 import com.nkanaev.comics.managers.Scanner;
 import com.nkanaev.comics.managers.Utils;
@@ -118,8 +117,8 @@ public class LibraryFragment extends Fragment
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Comic comic = mComics.get(position);
 
-        Intent intent = new Intent(getActivity(), BrowserActivity.class);
-        intent.putExtra(BrowserActivity.DIRECTORY, comic.getFile().getParent());
+        Intent intent = new Intent(getActivity(), LibraryBrowserActivity.class);
+        intent.putExtra(LibraryBrowserActivity.DIRECTORY, comic.getFile().getParent());
         startActivity(intent);
     }
 

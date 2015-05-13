@@ -10,6 +10,7 @@ import com.squareup.picasso.Picasso;
 
 public class ReaderActivity extends ActionBarActivity {
     public static final String PARAM_COMIC_ID = "PARAM_COMIC_ID";
+    public static final String PARAM_COMIC_FILE = "PARAM_COMIC_FILE";
 
     private Picasso mPicasso;
 
@@ -21,9 +22,16 @@ public class ReaderActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            int comicId = extras.getInt(PARAM_COMIC_ID);
 
-            ReaderFragment fragment = ReaderFragment.create(comicId);
+            ReaderFragment fragment = null;
+            String file = extras.getString(PARAM_COMIC_FILE);
+            if (file != null) {
+                fragment = ReaderFragment.create(file);
+            }
+            else {
+                int comicId = extras.getInt(PARAM_COMIC_ID);
+                fragment = ReaderFragment.create(comicId);
+            }
 
             getSupportFragmentManager()
                     .beginTransaction()

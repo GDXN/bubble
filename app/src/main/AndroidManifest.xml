@@ -16,7 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.BrowserActivity"
+        <activity android:name=".activity.LibraryBrowserActivity"
                   android:label="@string/app_name"
                   android:parentActivityName=".activity.MainActivity">
 
@@ -25,11 +25,11 @@
         </activity>
         <activity android:name=".activity.ReaderActivity"
                   android:label="@string/app_name"
-                  android:parentActivityName=".activity.BrowserActivity"
+                  android:parentActivityName=".activity.LibraryBrowserActivity"
                   android:theme="@style/ReaderTheme">
 
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                       android:value="com.nkanaev.comics.activity.BrowserActivity" />
+                       android:value=".activity.LibraryBrowserActivity" />
         </activity>
     </application>
 </manifest>

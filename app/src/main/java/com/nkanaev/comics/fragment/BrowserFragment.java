@@ -1,160 +1,87 @@
 package com.nkanaev.comics.fragment;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import com.nkanaev.comics.R;
+import com.nkanaev.comics.activity.ReaderActivity;
+import com.nkanaev.comics.managers.Utils;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.*;
-import android.widget.*;
-import android.support.v7.widget.SearchView;
-
-import com.nkanaev.comics.R;
-import com.nkanaev.comics.activity.ReaderActivity;
-import com.nkanaev.comics.managers.LocalCoverHandler;
-import com.nkanaev.comics.managers.Utils;
-import com.nkanaev.comics.model.Comic;
-import com.nkanaev.comics.model.Storage;
-import com.nkanaev.comics.view.CoverImageView;
-import com.squareup.picasso.Picasso;
 
 public class BrowserFragment extends Fragment
-        implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
-    private final static String STATE_PATH = "browserCurrentPath";
-
-    private GridView mGridView;
-    private ListAdapter mAdapter;
-    private ArrayList<Comic> mComics;
-    private ArrayList<Comic> mComicsFiltered;
-    private Picasso mPicasso;
-    private String mFilterSearch = "";
-    private int mFilterRead = R.id.menu_browser_filter_all;
-
-
-    public static BrowserFragment create(String path) {
-        BrowserFragment fragment = new BrowserFragment();
-        Bundle args = new Bundle();
-        args.putString(STATE_PATH, path);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public BrowserFragment() {}
+        implements AdapterView.OnItemClickListener {
+    private ListView mListView;
+    private File mCurrentDir;
+    private File mRootDir;
+    private File[] mSubdirs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String path = getArguments().getString(STATE_PATH);
-
-        mComics = Storage.getStorage(getActivity()).listComics(path);
-        Collections.sort(mComics);
-        filterContent();
-        Context ctx = getActivity();
-        mPicasso = new Picasso.Builder(ctx)
-                .addRequestHandler(new LocalCoverHandler(ctx))
-                .build();
-
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onDestroy() {
-        mPicasso.shutdown();
-        super.onDestroy();
+        mRootDir = Environment.getExternalStorageDirectory();
+        setCurrentDir(mRootDir);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_browser, container, false);
 
-        mAdapter = new BrowserAdapter();
-        int deviceWidth = Utils.getDeviceWidth(getActivity());
-        int columnWidth = getActivity().getResources().getInteger(R.integer.grid_comic_column_width);
-        int numColumns = Math.round((float) deviceWidth / columnWidth);
-
-        mGridView = (GridView)view.findViewById(R.id.gridView);
-        mGridView.setAdapter(mAdapter);
-        mGridView.setOnItemClickListener(this);
-        mGridView.setNumColumns(numColumns);
+        mListView = (ListView) view.findViewById(R.id.listview_browser);
+        mListView.setAdapter(new DirectoryAdapter());
+        mListView.setOnItemClickListener(this);
 
         return view;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.browser, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(this);
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_browser_filter_all:
-            case R.id.menu_browser_filter_read:
-            case R.id.menu_browser_filter_unread:
-                item.setChecked(true);
-                mFilterRead = item.getItemId();
-                filterContent();
-                return true;
+    private void setCurrentDir(File dir) {
+        mCurrentDir = dir;
+        ArrayList<File> subdirs = new ArrayList<>();
+        if (!mCurrentDir.getAbsolutePath().equals(mRootDir.getAbsolutePath())) {
+            subdirs.add(mCurrentDir.getParentFile());
         }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s) {
-        mFilterSearch = s;
-        filterContent();
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return true;
-    }
-
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Comic comic = mComics.get(position);
-
-        Intent intent = new Intent(getActivity(), ReaderActivity.class);
-        intent.putExtra(ReaderActivity.PARAM_COMIC_ID, comic.getId());
-        startActivity(intent);
-    }
-
-    private void filterContent() {
-        mComicsFiltered = new ArrayList<>();
-        for (Comic c: mComics) {
-            if (mFilterSearch.length() > 0 && !c.getFile().getName().contains(mFilterSearch))
-                continue;
-            if (mFilterRead != R.id.menu_browser_filter_all) {
-                if (mFilterRead == R.id.menu_browser_filter_read && c.getCurrentPage() == 0)
-                    continue;
-                if (mFilterRead == R.id.menu_browser_filter_unread && c.getCurrentPage() != 0)
-                    continue;
+        for (File f : mCurrentDir.listFiles()) {
+            if (f.isDirectory() || Utils.isArchive(f.getName())) {
+                subdirs.add(f);
             }
-            mComicsFiltered.add(c);
         }
+        Collections.sort(subdirs);
+        mSubdirs = subdirs.toArray(new File[subdirs.size()]);
 
-        if (mGridView != null) mGridView.invalidateViews();
+        if (mListView != null) {
+            mListView.invalidateViews();
+        }
     }
 
-    private final class BrowserAdapter extends BaseAdapter {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        File file = mSubdirs[position];
+        if (file.isDirectory()) {
+            setCurrentDir(file);
+        }
+        else {
+            Intent intent = new Intent(getActivity(), ReaderActivity.class);
+            intent.putExtra(ReaderActivity.PARAM_COMIC_FILE, file.getAbsolutePath());
+            startActivity(intent);
+        }
+    }
+
+    private final class DirectoryAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return mComicsFiltered.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mComicsFiltered.get(position);
+            return mSubdirs.length;
         }
 
         @Override
@@ -163,27 +90,26 @@ public class BrowserFragment extends Fragment
         }
 
         @Override
+        public Object getItem(int position) {
+            return mSubdirs[position];
+        }
+
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewGroup comicView = (ViewGroup) convertView;
-            if (comicView == null) {
-                comicView = (ViewGroup)getActivity()
-                        .getLayoutInflater()
-                        .inflate(R.layout.card_comic, parent, false);
+            if (convertView == null) {
+                convertView = getActivity().getLayoutInflater().inflate(R.layout.row_directory, parent, false);
             }
 
-            Comic comic = mComicsFiltered.get(position);
+            TextView textView = (TextView) convertView.findViewById(R.id.directory_row_text);
 
-            CoverImageView coverImageView = (CoverImageView)comicView.findViewById(R.id.comicImageView);
-            TextView titleTextView = (TextView)comicView.findViewById(R.id.comicTitleTextView);
-            TextView pagesTextView = (TextView)comicView.findViewById(R.id.comicPagerTextView);
+            if (position == 0 && !mCurrentDir.getAbsolutePath().equals(mRootDir.getAbsolutePath())) {
+                textView.setText("..");
+            }
+            else {
+                textView.setText(mSubdirs[position].getName());
+            }
 
-            titleTextView.setText(comic.getFile().getName());
-            pagesTextView.setText(Integer.toString(comic.getCurrentPage()) + '/' + Integer.toString(comic.getTotalPages()));
-
-            mPicasso.load(LocalCoverHandler.getComicCoverUri(comic))
-                    .into(coverImageView);
-
-            return comicView;
+            return convertView;
         }
     }
 }
