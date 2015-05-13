@@ -11,10 +11,12 @@ import com.nkanaev.comics.fragment.DirectoryFragment;
 import com.nkanaev.comics.fragment.LibraryFragment;
 import com.nkanaev.comics.R;
 
+import com.nkanaev.comics.view.AboutDialog;
 import com.nkanaev.comics.view.MenuLayout;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+        implements MenuLayout.OnMenuItemSelectListener {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -31,18 +33,7 @@ public class MainActivity extends ActionBarActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
         MenuLayout menuLayout = (MenuLayout) findViewById(R.id.navigation_layout);
-        menuLayout.setOnMenuItemSelectListener(new MenuLayout.OnMenuItemSelectListener() {
-            @Override
-            public void onMenuItemSelected(int resStringRef) {
-                if (resStringRef == R.string.menu_browser) {
-                    setFragment(new DirectoryFragment());
-                }
-                else if (resStringRef == R.string.menu_library) {
-                    setFragment(new LibraryFragment());
-                }
-                mDrawerLayout.closeDrawers();
-            }
-        });
+        menuLayout.setOnMenuItemSelectListener(this);
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
@@ -85,5 +76,21 @@ public class MainActivity extends ActionBarActivity {
             mDrawerLayout.openDrawer(GravityCompat.START);
         }
         return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onMenuItemSelected(int resStringRef) {
+        switch (resStringRef) {
+            case R.string.menu_browser:
+                setFragment(new DirectoryFragment());
+                break;
+            case R.string.menu_library:
+                setFragment(new LibraryFragment());
+                break;
+            case R.string.menu_about:
+                new AboutDialog(this).show();
+                break;
+        }
+        mDrawerLayout.closeDrawers();
     }
 }

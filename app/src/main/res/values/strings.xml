@@ -30,4 +30,8 @@
     <string name="search">Search</string>
 
     <string name="browser_search_hint">Please enter a search term</string>
+
+    <string name="dialog_about_title">Bubble</string>
+    <string name="dialog_about_subtitle">Android comic reader</string>
+    <string name="dialog_about_close">Got it</string>
 </resources>
