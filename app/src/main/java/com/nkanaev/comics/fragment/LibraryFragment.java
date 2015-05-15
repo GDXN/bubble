@@ -118,7 +118,7 @@ public class LibraryFragment extends Fragment
         Comic comic = mComics.get(position);
 
         Intent intent = new Intent(getActivity(), LibraryBrowserActivity.class);
-        intent.putExtra(LibraryBrowserActivity.DIRECTORY, comic.getFile().getParent());
+        intent.putExtra(LibraryBrowserFragment.PARAM_PATH, comic.getFile().getParent());
         startActivity(intent);
     }
 

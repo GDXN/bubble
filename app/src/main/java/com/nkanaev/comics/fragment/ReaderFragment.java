@@ -15,8 +15,6 @@ import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.managers.LocalComicHandler;
 import com.nkanaev.comics.managers.Utils;
-import com.nkanaev.comics.model.Comic;
-import com.nkanaev.comics.model.Storage;
 import com.nkanaev.comics.parsers.ParserBuilder;
 import com.nkanaev.comics.view.PageImageView;
 import com.nkanaev.comics.parsers.Parser;
@@ -29,7 +27,13 @@ import java.io.File;
 import java.util.HashMap;
 
 public class ReaderFragment extends Fragment {
-    private Comic mComic;
+    public static final int RESULT = 1;
+
+    public static final String RESULT_CURRENT_PAGE = "fragment.reader.currentpage";
+
+    public static final String PARAM_FILE = "readerFile";
+    public static final String PARAM_PAGE = "readerOpenMode";
+
     private Parser mParser;
     private ViewPager mViewPager;
     private ComicPagerAdapter mPagerAdapter;
@@ -41,6 +45,7 @@ public class ReaderFragment extends Fragment {
     private PageImageView.OnPageTouchListener mPageTouchListener;
     private boolean mIsFullscreen;
     private int mImageSize;
+    private int mCurrentPage;
 
     static {
         RESOURCE_VIEW_MODE = new HashMap<Integer, Constants.PageViewMode>();
@@ -49,29 +54,11 @@ public class ReaderFragment extends Fragment {
         RESOURCE_VIEW_MODE.put(R.id.view_mode_fit_width, Constants.PageViewMode.FIT_WIDTH);
     }
 
-    private enum OpenMode {
-        FROM_FILE,
-        FROM_LIBRARY
-    }
-
-    private final static String STATE_COMIC = "readerFragmentComic";
-    private final static String STATE_OPEN = "readerOpenMode";
-    private final static String STATE_FILE = "readerFile";
-
-    public static ReaderFragment create(int comicId) {
+    public static ReaderFragment create(String comicpath, int page) {
         ReaderFragment fragment = new ReaderFragment();
         Bundle args = new Bundle();
-        args.putInt(STATE_COMIC, comicId);
-        args.putSerializable(STATE_OPEN, OpenMode.FROM_LIBRARY);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static ReaderFragment create(String comicpath) {
-        ReaderFragment fragment = new ReaderFragment();
-        Bundle args = new Bundle();
-        args.putString(STATE_FILE, comicpath);
-        args.putSerializable(STATE_OPEN, OpenMode.FROM_FILE);
+        args.putString(PARAM_FILE, comicpath);
+        args.putInt(PARAM_PAGE, page);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,18 +69,10 @@ public class ReaderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        OpenMode mode = (OpenMode) getArguments().getSerializable(STATE_OPEN);
-        switch (mode) {
-            case FROM_FILE:
-                String path = getArguments().getString(STATE_FILE);
-                File file = new File(path);
-                mParser = new ParserBuilder(file).build();
-                break;
-            case FROM_LIBRARY:
-                int comicId = getArguments().getInt(STATE_COMIC);
-                mComic = Storage.getStorage(getActivity()).getComic(comicId);
-                mParser = new ParserBuilder(mComic.getFile()).buildForType(mComic.getType());
-        }
+        String path = getArguments().getString(PARAM_FILE);
+        mCurrentPage = getArguments().getInt(PARAM_PAGE);
+        File file = new File(path);
+        mParser = new ParserBuilder(file).build();
 
         int width = Utils.getDeviceWidth(getActivity());
         int height = Utils.getDeviceHeight(getActivity());
@@ -145,8 +124,9 @@ public class ReaderFragment extends Fragment {
         mViewPager = (ViewPager)view.findViewById(R.id.viewPager);
         mViewPager.setAdapter(mPagerAdapter);
 
-        if (mComic != null) {
-            mViewPager.setCurrentItem(mComic.getCurrentPage() - 1);
+        if (mCurrentPage != -1) {
+            mViewPager.setCurrentItem(mCurrentPage);
+            mCurrentPage = -1;
         }
         setFullscreen(true);
 
@@ -172,9 +152,6 @@ public class ReaderFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (mComic != null) {
-            mComic.setCurrentPage(mViewPager.getCurrentItem() + 1);
-        }
         try {
             mParser.destroy();
         }
@@ -183,6 +160,10 @@ public class ReaderFragment extends Fragment {
         }
         mPicasso.shutdown();
         super.onDestroy();
+    }
+
+    public int getCurrentPage() {
+        return mViewPager.getCurrentItem() + 1;
     }
 
     @Override

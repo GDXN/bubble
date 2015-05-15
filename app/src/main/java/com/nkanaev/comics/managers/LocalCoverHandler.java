@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
+import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.parsers.Parser;
 import com.nkanaev.comics.parsers.ParserBuilder;
 import com.squareup.picasso.Picasso;
@@ -50,7 +51,8 @@ public class LocalCoverHandler extends RequestHandler {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(stream, null, options);
-            options.inSampleSize = Utils.calculateInSampleSize(options, 300, 200);
+            options.inSampleSize = Utils.calculateInSampleSize(options,
+                    Constants.COVER_THUMBNAIL_WIDTH, Constants.COVER_THUMBNAIL_HEIGHT);
             options.inJustDecodeBounds = false;
             stream.close();
             stream = parser.getPage(0);

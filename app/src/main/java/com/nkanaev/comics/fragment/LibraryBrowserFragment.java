@@ -22,13 +22,14 @@ import com.squareup.picasso.Picasso;
 
 public class LibraryBrowserFragment extends Fragment
         implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
-    private final static String STATE_PATH = "browserCurrentPath";
+    public static final String PARAM_PATH = "browserCurrentPath";
 
     private GridView mGridView;
     private ListAdapter mAdapter;
     private ArrayList<Comic> mComics;
     private ArrayList<Comic> mComicsFiltered;
     private Picasso mPicasso;
+    private Comic mCurrentComic;
     private String mFilterSearch = "";
     private int mFilterRead = R.id.menu_browser_filter_all;
 
@@ -36,7 +37,7 @@ public class LibraryBrowserFragment extends Fragment
     public static LibraryBrowserFragment create(String path) {
         LibraryBrowserFragment fragment = new LibraryBrowserFragment();
         Bundle args = new Bundle();
-        args.putString(STATE_PATH, path);
+        args.putString(PARAM_PATH, path);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,7 +48,7 @@ public class LibraryBrowserFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String path = getArguments().getString(STATE_PATH);
+        String path = getArguments().getString(PARAM_PATH);
 
         mComics = Storage.getStorage(getActivity()).listComics(path);
         Collections.sort(mComics);
@@ -81,6 +82,17 @@ public class LibraryBrowserFragment extends Fragment
         mGridView.setNumColumns(numColumns);
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ReaderFragment.RESULT) {
+            int curPage = data.getIntExtra(ReaderFragment.RESULT_CURRENT_PAGE, -1);
+            if (curPage != -1 && mCurrentComic != null) {
+                mCurrentComic.setCurrentPage(curPage);
+                mGridView.invalidateViews();
+            }
+        }
     }
 
     @Override
@@ -125,8 +137,11 @@ public class LibraryBrowserFragment extends Fragment
         Comic comic = mComics.get(position);
 
         Intent intent = new Intent(getActivity(), ReaderActivity.class);
-        intent.putExtra(ReaderActivity.PARAM_COMIC_ID, comic.getId());
-        startActivity(intent);
+        intent.putExtra(ReaderFragment.PARAM_FILE, comic.getFile().getAbsolutePath());
+        intent.putExtra(ReaderFragment.PARAM_PAGE, comic.getCurrentPage());
+        startActivityForResult(intent, ReaderFragment.RESULT);
+
+        mCurrentComic = comic;
     }
 
     private void filterContent() {

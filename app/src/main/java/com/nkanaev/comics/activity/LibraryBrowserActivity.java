@@ -10,7 +10,6 @@ import com.nkanaev.comics.fragment.LibraryBrowserFragment;
 
 
 public class LibraryBrowserActivity extends ActionBarActivity {
-    public final static String DIRECTORY = "BROWSER_DIRECTORY";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,7 +19,7 @@ public class LibraryBrowserActivity extends ActionBarActivity {
 
         Log.d("SimpleActivity", "OnCreate Started");
         Intent intent = getIntent();
-        String path = intent.getStringExtra(DIRECTORY);
+        String path = intent.getStringExtra(LibraryBrowserFragment.PARAM_PATH);
         LibraryBrowserFragment fragment = LibraryBrowserFragment.create(path);
 
         if (savedInstanceState == null) {
