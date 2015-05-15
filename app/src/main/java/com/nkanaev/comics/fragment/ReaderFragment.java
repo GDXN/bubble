@@ -46,6 +46,7 @@ public class ReaderFragment extends Fragment {
     private boolean mIsFullscreen;
     private int mImageSize;
     private int mCurrentPage;
+    private String mFilename;
 
     static {
         RESOURCE_VIEW_MODE = new HashMap<Integer, Constants.PageViewMode>();
@@ -73,6 +74,7 @@ public class ReaderFragment extends Fragment {
         mCurrentPage = getArguments().getInt(PARAM_PAGE);
         File file = new File(path);
         mParser = new ParserBuilder(file).build();
+        mFilename = file.getName();
 
         int width = Utils.getDeviceWidth(getActivity());
         int height = Utils.getDeviceHeight(getActivity());
@@ -103,10 +105,10 @@ public class ReaderFragment extends Fragment {
                 }
 
                 if (x < (float)mViewPager.getWidth() / 3) {
-                    mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+                    setCurrentPage(getCurrentPage() - 1);
                 }
                 else if (x > (float)mViewPager.getWidth() / 3 * 2) {
-                    mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
+                    setCurrentPage(getCurrentPage() + 1);
                 }
                 else {
                     setFullscreen(false, true);
@@ -121,11 +123,17 @@ public class ReaderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_reader, container, false);
 
-        mViewPager = (ViewPager)view.findViewById(R.id.viewPager);
+        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                setCurrentPage(position+1);
+            }
+        });
 
         if (mCurrentPage != -1) {
-            mViewPager.setCurrentItem(mCurrentPage);
+            setCurrentPage(mCurrentPage);
             mCurrentPage = -1;
         }
         setFullscreen(true);
@@ -181,6 +189,15 @@ public class ReaderFragment extends Fragment {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setCurrentPage(int page) {
+        mViewPager.setCurrentItem(page - 1);
+        String title = new StringBuilder()
+                .append("(").append(page).append("/").append(mParser.numPages()).append(") ")
+                .append(mFilename)
+                .toString();
+        getActionBar().setTitle(title);
     }
 
     private class ComicPagerAdapter extends PagerAdapter {
