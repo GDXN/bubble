@@ -76,6 +76,8 @@ public class ReaderFragment extends Fragment {
         mParser = new ParserBuilder(file).build();
         mFilename = file.getName();
 
+        mCurrentPage = Math.max(1, Math.min(mCurrentPage, mParser.numPages()));
+
         int width = Utils.getDeviceWidth(getActivity());
         int height = Utils.getDeviceHeight(getActivity());
         mImageSize = Math.max(width, height) * 2;

@@ -9,6 +9,8 @@
         <item name="android:colorAccent">@color/accent</item>
 
         <item name="android:textColorPrimary">@color/light</item>
+
+        <item name="android:colorControlHighlight">@color/background</item>
     </style>
 
     <style name="MyActionBarStyle" parent="@style/Widget.AppCompat.ActionBar">
