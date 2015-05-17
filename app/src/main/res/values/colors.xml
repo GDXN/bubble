@@ -3,20 +3,18 @@
     <color name="transparent">#00000000</color>
 
     <!--color palette -->
-    <color name="primary">#ffdb5162</color>
-    <color name="primaryDark">#ffb35159</color>
+    <color name="primary">#DB5162</color>
+    <color name="primaryDark">#B35159</color>
     <color name="accent">#ff466e87</color>
 
-    <color name="light">#fff8f8f8</color>
-    <color name="text">#ff353e4e</color>
-    <color name="dark">#ff161616</color>
-    <color name="background">#ffe9e9ea</color>
+    <color name="light">#F8F8F8</color>
+    <color name="text">#353E4E</color>
+    <color name="dark">#161616</color>
+    <color name="background">#E9E9EA</color>
 
-    <color name="dark_semitransparent">#64000000</color>
+    <color name="dark_semitransparent">#64161616</color>
 
-    <color name="card_text">#000</color>
     <color name="card_subtext">#444</color>
 
-    <color name="dialog_title">#ffdb5162</color>
     <color name="dialog_subtitle">#444</color>
 </resources>

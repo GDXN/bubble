@@ -23,6 +23,6 @@
                 android:singleLine="true"
                 android:layout_weight="1"
                 android:textSize="@dimen/card_text"
-                android:textColor="@color/card_text"/>
+                android:textColor="@color/dark"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

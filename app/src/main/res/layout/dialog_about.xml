@@ -11,7 +11,7 @@
             android:paddingRight="24dp"
             android:text="@string/dialog_about_title"
             android:textSize="@dimen/dialog_title"
-            android:textColor="@color/dialog_title"
+            android:textColor="@color/primary"
             android:singleLine="true"/>
     <TextView
             android:layout_width="match_parent"
