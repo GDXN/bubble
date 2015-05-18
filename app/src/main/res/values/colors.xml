@@ -17,4 +17,5 @@
     <color name="card_subtext">#444</color>
 
     <color name="dialog_subtitle">#444</color>
+    <color name="separator">#D1D1D1</color>
 </resources>
