@@ -115,15 +115,8 @@ public class Storage {
         return comics;
     }
 
-    private Comic comicFromCursor(Cursor c) {
-        int id = c.getInt(c.getColumnIndex(Book.COLUMN_NAME_ID));
-        String path = c.getString(c.getColumnIndex(Book.COLUMN_NAME_FILEPATH));
-        String name = c.getString(c.getColumnIndex(Book.COLUMN_NAME_FILENAME));
-        int numPages = c.getInt(c.getColumnIndex(Book.COLUMN_NAME_NUM_PAGES));
-        int currentPage = c.getInt(c.getColumnIndex(Book.COLUMN_NAME_CURRENT_PAGE));
-        String type = c.getString(c.getColumnIndex(Book.COLUMN_NAME_TYPE));
-
-        return new Comic(this, id, path, name, type, numPages, currentPage);
+    public ArrayList<Comic> listComics() {
+        return listComics(null);
     }
 
     public ArrayList<Comic> listComics(String path) {
@@ -145,7 +138,7 @@ public class Storage {
             } while (c.moveToNext());
         }
 
-//        c.close();
+        c.close();
 
         return comics;
     }
@@ -165,6 +158,17 @@ public class Storage {
         Comic comic = comicFromCursor(c);
         c.close();
         return comic;
+    }
+
+    private Comic comicFromCursor(Cursor c) {
+        int id = c.getInt(c.getColumnIndex(Book.COLUMN_NAME_ID));
+        String path = c.getString(c.getColumnIndex(Book.COLUMN_NAME_FILEPATH));
+        String name = c.getString(c.getColumnIndex(Book.COLUMN_NAME_FILENAME));
+        int numPages = c.getInt(c.getColumnIndex(Book.COLUMN_NAME_NUM_PAGES));
+        int currentPage = c.getInt(c.getColumnIndex(Book.COLUMN_NAME_CURRENT_PAGE));
+        String type = c.getString(c.getColumnIndex(Book.COLUMN_NAME_TYPE));
+
+        return new Comic(this, id, path, name, type, numPages, currentPage);
     }
 
     public void bookmarkPage(int comicId, int page) {

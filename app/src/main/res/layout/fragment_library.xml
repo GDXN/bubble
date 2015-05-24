@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
+<android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragmentLibraryLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragment_groupbrowser_container"
         android:background="@color/background">
 
     <GridView
@@ -23,12 +23,4 @@
             android:scrollbarStyle="insideInset"
             android:drawSelectorOnTop="true"/>
 
-        <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/progressBar"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:visibility="invisible"/>
-
-</FrameLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

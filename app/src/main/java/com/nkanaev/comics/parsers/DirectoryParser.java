@@ -10,8 +10,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FolderParser implements Parser {
-    private ArrayList<File> mFiles;
+public class DirectoryParser implements Parser {
+    private ArrayList<File> mFiles = new ArrayList<>();
 
     @Override
     public void parse(File dir) throws IOException {
@@ -20,6 +20,9 @@ public class FolderParser implements Parser {
         }
 
         for (File f : dir.listFiles()) {
+            if (f.isDirectory()) {
+                throw new IOException("Probably not a comic directory");
+            }
             if (Utils.isImage(f.getAbsolutePath())) {
                 mFiles.add(f);
             }

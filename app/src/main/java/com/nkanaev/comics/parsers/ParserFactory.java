@@ -12,6 +12,9 @@ public class ParserFactory {
     public static Parser create(File file) {
         Parser parser = null;
         String fileName = file.getAbsolutePath().toLowerCase();
+        if (file.isDirectory()) {
+            parser = new DirectoryParser();
+        }
         if (fileName.matches(".+(cbz|zip)$")) {
             parser = new ZipParser();
         }
