@@ -10,7 +10,7 @@
     <item android:id="@+id/menuReaderAspectRatio"
           android:title="@string/menu_browser_filter"
           android:icon="@drawable/ic_filter_list_white_24dp"
-          app:showAsAction="never">
+          app:showAsAction="always">
         <menu>
             <group android:checkableBehavior="single">
                 <item android:id="@+id/menu_browser_filter_all"
