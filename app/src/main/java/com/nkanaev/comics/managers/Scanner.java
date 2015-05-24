@@ -7,7 +7,7 @@ import java.util.Deque;
 import android.os.AsyncTask;
 import com.nkanaev.comics.model.*;
 import com.nkanaev.comics.parsers.Parser;
-import com.nkanaev.comics.parsers.ParserBuilder;
+import com.nkanaev.comics.parsers.ParserFactory;
 
 public class Scanner extends AsyncTask<File, Integer, Long> {
     private Storage mStorage;
@@ -33,7 +33,7 @@ public class Scanner extends AsyncTask<File, Integer, Long> {
                     files.add(file);
                 }
 
-                Parser parser = new ParserBuilder(file).build();
+                Parser parser = ParserFactory.create(file);
                 if (parser == null) {
                     continue;
                 }

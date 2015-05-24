@@ -6,10 +6,10 @@ import java.io.File;
 
 
 public interface Parser {
-    public void parse(File file) throws IOException;
+    void parse(File file) throws IOException;
+    void destroy() throws IOException;
 
-    public InputStream getPage(int num) throws IOException;
-    public int numPages();
-    public String getType();
-    public void destroy() throws IOException;
+    String getType();
+    InputStream getPage(int num) throws IOException;
+    int numPages();
 }

@@ -12,7 +12,7 @@ import android.net.Uri;
 
 import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.parsers.Parser;
-import com.nkanaev.comics.parsers.ParserBuilder;
+import com.nkanaev.comics.parsers.ParserFactory;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
@@ -45,7 +45,7 @@ public class LocalCoverHandler extends RequestHandler {
         File coverFile = new File(mContext.getExternalCacheDir(), Utils.MD5(comicUri.getPath()));
 
         if (!coverFile.isFile()) {
-            Parser parser = new ParserBuilder(comicUri.getPath()).buildForType(comicUri.getFragment());
+            Parser parser = ParserFactory.create(comicUri.getPath());
             InputStream stream = parser.getPage(0);
 
             BitmapFactory.Options options = new BitmapFactory.Options();

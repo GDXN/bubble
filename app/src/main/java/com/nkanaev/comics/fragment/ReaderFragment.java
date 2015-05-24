@@ -15,7 +15,7 @@ import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.managers.LocalComicHandler;
 import com.nkanaev.comics.managers.Utils;
-import com.nkanaev.comics.parsers.ParserBuilder;
+import com.nkanaev.comics.parsers.ParserFactory;
 import com.nkanaev.comics.view.PageImageView;
 import com.nkanaev.comics.parsers.Parser;
 
@@ -73,7 +73,7 @@ public class ReaderFragment extends Fragment {
         String path = getArguments().getString(PARAM_FILE);
         mCurrentPage = getArguments().getInt(PARAM_PAGE);
         File file = new File(path);
-        mParser = new ParserBuilder(file).build();
+        mParser = ParserFactory.create(file);
         mFilename = file.getName();
 
         mCurrentPage = Math.max(1, Math.min(mCurrentPage, mParser.numPages()));
