@@ -33,4 +33,6 @@
     <string name="dialog_about_title">Bubble</string>
     <string name="dialog_about_subtitle">Android comic reader</string>
     <string name="dialog_about_close">Got it</string>
+
+    <string name="reload">Reload</string>
 </resources>

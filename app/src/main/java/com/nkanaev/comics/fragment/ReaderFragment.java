@@ -6,7 +6,7 @@ import android.content.Context;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.*;
-import android.widget.LinearLayout;
+import android.widget.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.PagerAdapter;
@@ -26,7 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.HashMap;
 
-public class ReaderFragment extends Fragment {
+public class ReaderFragment extends Fragment implements View.OnTouchListener {
     public static final int RESULT = 1;
 
     public static final String RESULT_CURRENT_PAGE = "fragment.reader.currentpage";
@@ -42,11 +42,12 @@ public class ReaderFragment extends Fragment {
     private Constants.PageViewMode mPageViewMode;
     private final static HashMap<Integer, Constants.PageViewMode> RESOURCE_VIEW_MODE;
     private SharedPreferences mPreferences;
-    private PageImageView.OnPageTouchListener mPageTouchListener;
+    private GestureDetector mGestureDetector;
     private boolean mIsFullscreen;
     private int mImageSize;
     private int mCurrentPage;
     private String mFilename;
+    private boolean mSingleTap;
 
     static {
         RESOURCE_VIEW_MODE = new HashMap<Integer, Constants.PageViewMode>();
@@ -83,14 +84,12 @@ public class ReaderFragment extends Fragment {
         mImageSize = Math.max(width, height) * 2;
 
         mComicHandler = new LocalComicHandler(mParser, mImageSize);
-
         mPicasso = new Picasso.Builder(getActivity())
                 .memoryCache(new LruCache(Utils.calculateMemorySize(getActivity(), 10)))
                 .addRequestHandler(mComicHandler)
                 .build();
-        mPicasso.setLoggingEnabled(true);
-
         mPagerAdapter = new ComicPagerAdapter();
+        mGestureDetector = new GestureDetector(getActivity(), new MyTouchListener());
 
         mPreferences = getActivity().getSharedPreferences(Constants.SETTINGS_NAME, 0);
         int viewModeInt = mPreferences.getInt(
@@ -98,25 +97,6 @@ public class ReaderFragment extends Fragment {
                 Constants.PageViewMode.ASPECT_FIT.native_int);
         mPageViewMode = Constants.PageViewMode.values()[viewModeInt];
 
-        mPageTouchListener = new PageImageView.OnPageTouchListener() {
-            @Override
-            public void onPageClicked(float x, float y) {
-                if (!isFullscreen()) {
-                    setFullscreen(true, true);
-                    return;
-                }
-
-                if (x < (float)mViewPager.getWidth() / 3) {
-                    setCurrentPage(getCurrentPage() - 1);
-                }
-                else if (x > (float)mViewPager.getWidth() / 3 * 2) {
-                    setCurrentPage(getCurrentPage() + 1);
-                }
-                else {
-                    setFullscreen(false, true);
-                }
-            }
-        };
 
         setHasOptionsMenu(true);
     }
@@ -172,6 +152,12 @@ public class ReaderFragment extends Fragment {
         super.onDestroy();
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        mGestureDetector.onTouchEvent(event);
+        return true;
+    }
+
     public int getCurrentPage() {
         return mViewPager.getCurrentItem() + 1;
     }
@@ -217,14 +203,23 @@ public class ReaderFragment extends Fragment {
         public Object instantiateItem(ViewGroup container, int position) {
             final LayoutInflater inflater = (LayoutInflater)getActivity()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View layout = inflater.inflate(R.layout.fragment_reader_page, container, false);
-            PageImageView pageImageView = (PageImageView)layout.findViewById(R.id.comic_page);
+
+            View layout = null;
+            try {
+
+                layout = inflater.inflate(R.layout.fragment_reader_page, container, false);
+            }
+            catch (Exception e) {
+                throw e;
+            }
+
+            PageImageView pageImageView = (PageImageView) layout.findViewById(R.id.pageImageView);
             pageImageView.setViewMode(mPageViewMode);
-            pageImageView.setOnPageTouchListener(mPageTouchListener);
+
             container.addView(layout);
 
             mPicasso.load(mComicHandler.getPageUri(position))
-                    .into(pageImageView, new MyCallback(pageImageView));
+                    .into(pageImageView, new MyCallback(layout, position));
 
             return layout;
         }
@@ -235,20 +230,65 @@ public class ReaderFragment extends Fragment {
         }
     }
 
-    private class MyCallback implements Callback {
-        private PageImageView mImageView;
+    private class MyTouchListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            if (!isFullscreen()) {
+                setFullscreen(true, true);
+                return true;
+            }
 
-        public MyCallback(PageImageView imageView) {
-            mImageView = imageView;
+            float x = e.getX();
+
+            if (x < (float) mViewPager.getWidth() / 3)
+                setCurrentPage(getCurrentPage() - 1);
+            else if (x > (float) mViewPager.getWidth() / 3 * 2)
+                setCurrentPage(getCurrentPage() + 1);
+            else
+                setFullscreen(false, true);
+
+            return true;
+        }
+    }
+
+    private class MyCallback implements Callback, Button.OnClickListener {
+        private ImageView mImageView;
+        private ImageButton mReloadButton;
+        private ProgressBar mProgressBar;
+        private int mPageNum;
+
+        public MyCallback(View container, int pageNum) {
+            mImageView = (ImageView) container.findViewById(R.id.pageImageView);
+            mProgressBar = (ProgressBar) container.findViewById(R.id.pageProgressBar);
+            mReloadButton = (ImageButton) container.findViewById(R.id.reloadButton);
+            mReloadButton.setOnClickListener(this);
+            mPageNum = pageNum;
+
+            mImageView.setOnTouchListener(ReaderFragment.this);
+            container.setOnTouchListener(ReaderFragment.this);
         }
 
         @Override
         public void onSuccess() {
+            mImageView.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+            mReloadButton.setVisibility(View.GONE);
         }
 
         @Override
         public void onError() {
-            mImageView.setImageResource(R.drawable.ic_refresh_white_24dp);
+            mImageView.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
+            mReloadButton.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mReloadButton.setVisibility(View.GONE);
+
+            mPicasso.load(mComicHandler.getPageUri(mPageNum))
+                    .into(mImageView, this);
         }
     }
 

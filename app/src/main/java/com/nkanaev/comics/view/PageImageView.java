@@ -17,14 +17,10 @@ import com.nkanaev.comics.Constants;
 
 public class PageImageView extends ImageView {
 
-    public interface OnPageTouchListener {
-        void onPageClicked(float x, float y);
-    }
-
     private Constants.PageViewMode mViewMode;
     private Matrix mImageMatrix;
     private boolean mEdited;
-    private OnPageTouchListener mPageTouchListener;
+    private OnTouchListener mOuterTouchListener;
     private ScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mDragGestureDetector;
     private float[] mMatrixValues = new float[9];
@@ -45,10 +41,6 @@ public class PageImageView extends ImageView {
         scale();
     }
 
-    public void setOnPageTouchListener(OnPageTouchListener listener) {
-        mPageTouchListener = listener;
-    }
-
     private void init() {
         mImageMatrix = getImageMatrix();
         mEdited = false;
@@ -61,9 +53,15 @@ public class PageImageView extends ImageView {
             public boolean onTouch(View v, MotionEvent event) {
                 mScaleGestureDetector.onTouchEvent(event);
                 mDragGestureDetector.onTouchEvent(event);
+                if (mOuterTouchListener != null) mOuterTouchListener.onTouch(v, event);
                 return true;
             }
         });
+    }
+
+    @Override
+    public void setOnTouchListener(OnTouchListener l) {
+        mOuterTouchListener = l;
     }
 
     @Override
@@ -126,13 +124,7 @@ public class PageImageView extends ImageView {
         setImageMatrix(mImageMatrix);
     }
 
-    private class PrivateScaleDetector implements ScaleGestureDetector.OnScaleGestureListener {
-
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            return true;
-        }
-
+    private class PrivateScaleDetector extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             mImageMatrix.getValues(mMatrixValues);
@@ -146,22 +138,9 @@ public class PageImageView extends ImageView {
             setImageMatrix(mImageMatrix);
             return true;
         }
-
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-
-        }
     }
 
     private class PrivateDragListener extends SimpleOnGestureListener {
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (mPageTouchListener == null)
-                return false;
-            mPageTouchListener.onPageClicked(e.getX(), e.getY());
-            return true;
-        }
-
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             mImageMatrix.postTranslate(-distanceX, -distanceY);
