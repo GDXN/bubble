@@ -16,7 +16,8 @@
     <ListView
             android:id="@+id/directory_listview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:divider="@null"
             android:drawSelectorOnTop="true"/>
 
@@ -24,7 +25,8 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:padding="8dp"
+            android:minHeight="48dp">
         <Button
                 android:id="@+id/directory_picker_confirm"
                 android:text="@string/directory_picker_confirm"
@@ -33,10 +35,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:background="@color/transparent"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
-                android:minWidth="64dp"/>
+                android:minWidth="64dp"
+                style="?android:attr/borderlessButtonStyle"/>
         <Button
                 android:id="@+id/directory_picker_cancel"
                 android:text="@string/directory_picker_cancel"
@@ -45,8 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/directory_picker_confirm"
                 android:layout_toStartOf="@id/directory_picker_confirm"
-                android:background="@color/transparent"
-                android:minWidth="64dp"/>
+                android:minWidth="64dp"
+                style="?android:attr/borderlessButtonStyle"/>
     </RelativeLayout>
 
 </LinearLayout>

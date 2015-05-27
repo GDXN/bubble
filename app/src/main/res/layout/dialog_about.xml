@@ -33,9 +33,9 @@
                 android:textColor="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/transparent"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:minWidth="64dp"/>
+                android:minWidth="64dp"
+                style="?android:attr/borderlessButtonStyle"/>
     </RelativeLayout>
 </LinearLayout>
