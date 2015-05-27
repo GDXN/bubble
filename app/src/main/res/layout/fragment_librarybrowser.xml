@@ -19,6 +19,6 @@
             android:focusable="false"
             android:padding="@dimen/grid_margin"
             android:clipToPadding="false"
-            android:scrollbarStyle="insideInset"
+            android:scrollbarStyle="insideOverlay"
             android:drawSelectorOnTop="true"/>
 </FrameLayout>
