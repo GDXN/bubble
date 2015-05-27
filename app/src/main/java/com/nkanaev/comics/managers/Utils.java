@@ -129,4 +129,8 @@ public final class Utils {
         int memoryClass = activityManager.getMemoryClass();
         return 1024 * 1024 * memoryClass / percentage;
     }
+
+    public static File getCacheFile(Context context, String identifier) {
+        return new File(context.getExternalCacheDir(), Utils.MD5(identifier));
+    }
 }

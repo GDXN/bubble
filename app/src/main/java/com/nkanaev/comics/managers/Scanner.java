@@ -3,6 +3,7 @@ package com.nkanaev.comics.managers;
 import java.io.File;
 import java.util.*;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import com.nkanaev.comics.model.*;
 import com.nkanaev.comics.parsers.Parser;
@@ -10,14 +11,11 @@ import com.nkanaev.comics.parsers.ParserFactory;
 
 public class Scanner extends AsyncTask<Void, Void, Void> {
     private Storage mStorage;
+    private Context mContext;
     private DirectoryIterator mDirIterator;
 
-    public enum Mode {
-        CREATE,
-        REFRESH,
-    }
-
-    public Scanner(Storage storage, File rootDir) {
+    public Scanner(Context context, Storage storage, File rootDir) {
+        mContext = context;
         mStorage = storage;
         mDirIterator = new DirectoryIterator(rootDir);
     }
@@ -46,6 +44,8 @@ public class Scanner extends AsyncTask<Void, Void, Void> {
         }
 
         for (Comic missing : dirComics.values()) {
+            File coverCache = Utils.getCacheFile(mContext, missing.getFile().getAbsolutePath());
+            coverCache.delete();
             mStorage.removeComic(missing.getId());
         }
 

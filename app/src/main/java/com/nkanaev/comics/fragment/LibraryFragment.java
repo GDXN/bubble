@@ -141,7 +141,7 @@ public class LibraryFragment extends Fragment
         editor.apply();
 
         if (mScanner == null || mScanner.getStatus() == AsyncTask.Status.FINISHED) {
-            mScanner = new Scanner(mStorage, file) {
+            mScanner = new Scanner(getActivity(), mStorage, file) {
                 @Override
                 protected void onPreExecute() {
                     mRefreshLayout.setRefreshing(true);
@@ -179,10 +179,12 @@ public class LibraryFragment extends Fragment
             if (libraryDir == null)
                 return;
 
-            mScanner = new Scanner(mStorage, new File(libraryDir)) {
+            mScanner = new Scanner(getActivity(), mStorage, new File(libraryDir)) {
                 @Override
                 protected void onPreExecute() {
                     mRefreshLayout.setRefreshing(true);
+                    mComics.clear();
+                    mGridView.requestLayout();
                 }
 
                 @Override

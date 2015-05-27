@@ -42,7 +42,7 @@ public class LocalCoverHandler extends RequestHandler {
 
     private String getCoverPath(Uri comicUri) throws IOException {
 
-        File coverFile = new File(mContext.getExternalCacheDir(), Utils.MD5(comicUri.getPath()));
+        File coverFile = Utils.getCacheFile(mContext, comicUri.getPath());
 
         if (!coverFile.isFile()) {
             Parser parser = ParserFactory.create(comicUri.getPath());
