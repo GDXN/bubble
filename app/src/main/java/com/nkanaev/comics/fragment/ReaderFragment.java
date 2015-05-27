@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.HashMap;
 
+
 public class ReaderFragment extends Fragment implements View.OnTouchListener {
     public static final int RESULT = 1;
 
@@ -204,14 +205,7 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
             final LayoutInflater inflater = (LayoutInflater)getActivity()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            View layout = null;
-            try {
-
-                layout = inflater.inflate(R.layout.fragment_reader_page, container, false);
-            }
-            catch (Exception e) {
-                throw e;
-            }
+            View layout = inflater.inflate(R.layout.fragment_reader_page, container, false);
 
             PageImageView pageImageView = (PageImageView) layout.findViewById(R.id.pageImageView);
             pageImageView.setViewMode(mPageViewMode);
