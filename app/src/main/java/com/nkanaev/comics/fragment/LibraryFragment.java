@@ -66,6 +66,8 @@ public class LibraryFragment extends Fragment
         mDirectorySelectDialog.setCurrentDirectory(Environment.getExternalStorageDirectory());
         mDirectorySelectDialog.setOnDirectorySelectListener(this);
 
+        getActivity().setTitle(R.string.menu_library);
+
         setHasOptionsMenu(true);
     }
 

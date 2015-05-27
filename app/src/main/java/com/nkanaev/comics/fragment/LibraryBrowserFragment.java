@@ -1,8 +1,10 @@
 package com.nkanaev.comics.fragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -58,6 +60,8 @@ public class LibraryBrowserFragment extends Fragment
                 .addRequestHandler(new LocalCoverHandler(ctx))
                 .build();
 
+        getActivity().setTitle(new File(path).getName());
+
         setHasOptionsMenu(true);
     }
 
@@ -71,13 +75,13 @@ public class LibraryBrowserFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_librarybrowser, container, false);
 
-        mAdapter = new BrowserAdapter();
+        final BrowserAdapter adapter = new BrowserAdapter();
         int deviceWidth = Utils.getDeviceWidth(getActivity());
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_comic_column_width);
         int numColumns = Math.round((float) deviceWidth / columnWidth);
 
         mGridView = (GridView)view.findViewById(R.id.gridView);
-        mGridView.setAdapter(mAdapter);
+        mGridView.setAdapter(adapter);
         mGridView.setOnItemClickListener(this);
         mGridView.setNumColumns(numColumns);
 

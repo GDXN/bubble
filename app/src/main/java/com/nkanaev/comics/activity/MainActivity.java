@@ -19,6 +19,8 @@ public class MainActivity extends ActionBarActivity
         implements MenuLayout.OnMenuItemSelectListener {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private BrowserFragment mBrowserFragment;
+    private LibraryFragment mLibraryFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public class MainActivity extends ActionBarActivity
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        mBrowserFragment = new BrowserFragment();
+        mLibraryFragment = new LibraryFragment();
 
         getSupportActionBar().setElevation(8);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -82,10 +86,10 @@ public class MainActivity extends ActionBarActivity
     public void onMenuItemSelected(int resStringRef) {
         switch (resStringRef) {
             case R.string.menu_browser:
-                setFragment(new BrowserFragment());
+                setFragment(mBrowserFragment);
                 break;
             case R.string.menu_library:
-                setFragment(new LibraryFragment());
+                setFragment(mLibraryFragment);
                 break;
             case R.string.menu_about:
                 new AboutDialog(this).show();

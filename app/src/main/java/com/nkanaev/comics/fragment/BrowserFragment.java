@@ -33,6 +33,8 @@ public class BrowserFragment extends Fragment
 
         mRootDir = Environment.getExternalStorageDirectory();
         setCurrentDir(mRootDir);
+
+        getActivity().setTitle(R.string.menu_browser);
     }
 
     @Override
