@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -19,7 +18,7 @@ import com.nkanaev.comics.Constants;
 public class PageImageView extends ImageView {
 
     public interface OnPageTouchListener {
-        public void onPageClicked(float x, float y);
+        void onPageClicked(float x, float y);
     }
 
     private Constants.PageViewMode mViewMode;

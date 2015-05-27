@@ -130,7 +130,7 @@ public class ReaderFragment extends Fragment {
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                setCurrentPage(position+1);
+                setCurrentPage(position + 1);
             }
         });
 
@@ -279,20 +279,28 @@ public class ReaderFragment extends Fragment {
 
         if (fullscreen) {
             if (actionBar != null) actionBar.hide();
-            mViewPager.setSystemUiVisibility(
+
+            int flag =
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            if (Utils.isKitKatOrLater()) {
+                flag |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+                flag |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                flag |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            }
+            mViewPager.setSystemUiVisibility(flag);
         }
         else {
             if (actionBar != null) actionBar.show();
-            mViewPager.setSystemUiVisibility(
+
+            int flag =
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            if (Utils.isKitKatOrLater()) {
+                flag |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+            }
+            mViewPager.setSystemUiVisibility(flag);
         }
     }
 
