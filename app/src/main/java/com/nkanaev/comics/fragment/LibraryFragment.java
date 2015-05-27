@@ -2,6 +2,8 @@ package com.nkanaev.comics.fragment;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -55,7 +57,8 @@ public class LibraryFragment extends Fragment
                 .build();
 
         mStorage = Storage.getStorage(getActivity());
-        mComics = mStorage.listDirectoryComics();
+        getComics();
+
         if (mComics.size() == 0) {
             SharedPreferences preferences = getActivity()
                     .getSharedPreferences(Constants.SETTINGS_NAME, 0);
@@ -142,7 +145,7 @@ public class LibraryFragment extends Fragment
                 @Override
                 protected void onPreExecute() {
                     mRefreshLayout.setRefreshing(true);
-                    mComics = new ArrayList<>();
+                    mComics.clear();
                     mGridView.requestLayout();
                 }
 
@@ -150,7 +153,7 @@ public class LibraryFragment extends Fragment
                 protected void onPostExecute(Void aVoid) {
                     mRefreshLayout.setRefreshing(false);
                     mRefreshLayout.setEnabled(true);
-                    mComics = mStorage.listDirectoryComics();
+                    getComics();
                     mGridView.requestLayout();
                 }
             };
@@ -185,12 +188,23 @@ public class LibraryFragment extends Fragment
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     mRefreshLayout.setRefreshing(false);
-                    mComics = Storage.getStorage(getActivity()).listDirectoryComics();
+                    getComics();
                     mGridView.requestLayout();
                 }
             };
             mScanner.execute();
         }
+    }
+
+    private void getComics() {
+        mComics = Storage.getStorage(getActivity()).listDirectoryComics();
+        Collections.sort(mComics, new Comparator<Comic>() {
+            @Override
+            public int compare(Comic lhs, Comic rhs) {
+                return lhs.getFile().getParentFile().getName()
+                        .compareTo(rhs.getFile().getParentFile().getName());
+            }
+        });
     }
 
     private final class GroupBrowserAdapter extends BaseAdapter {
