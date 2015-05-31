@@ -104,8 +104,8 @@ public final class Utils {
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
+        int height = options.outHeight;
+        int width = options.outWidth;
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {

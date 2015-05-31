@@ -16,6 +16,7 @@ import com.nkanaev.comics.R;
 import com.nkanaev.comics.managers.LocalComicHandler;
 import com.nkanaev.comics.managers.Utils;
 import com.nkanaev.comics.parsers.ParserFactory;
+import com.nkanaev.comics.parsers.RarParser;
 import com.nkanaev.comics.view.PageImageView;
 import com.nkanaev.comics.parsers.Parser;
 
@@ -97,6 +98,12 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
                 Constants.SETTINGS_PAGE_VIEW_MODE,
                 Constants.PageViewMode.ASPECT_FIT.native_int);
         mPageViewMode = Constants.PageViewMode.values()[viewModeInt];
+
+        // workaround: extract rar achive
+        if (mParser instanceof RarParser) {
+            File cacheDir = new File(getActivity().getExternalCacheDir(), "c" + Utils.MD5(path));
+            ((RarParser)mParser).setCacheDirectory(cacheDir);
+        }
 
 
         setHasOptionsMenu(true);

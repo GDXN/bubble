@@ -1,8 +1,6 @@
 package com.nkanaev.comics.parsers;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +14,7 @@ import com.nkanaev.comics.managers.Utils;
 public class RarParser implements Parser {
     private ArrayList<FileHeader> mHeaders = new ArrayList<FileHeader>();
     private Archive mArchive;
+    private File mCacheDir;
 
     @Override
     public void parse(File file) throws IOException {
@@ -29,7 +28,7 @@ public class RarParser implements Parser {
         FileHeader header = mArchive.nextFileHeader();
         while (header != null) {
             if (!header.isDirectory()) {
-                String name = header.isUnicode() ? header.getFileNameW() : header.getFileNameString();
+                String name = getName(header);
                 if (Utils.isImage(name)) {
                     mHeaders.add(header);
                 }
@@ -40,12 +39,13 @@ public class RarParser implements Parser {
 
         Collections.sort(mHeaders, new Comparator<FileHeader>() {
             public int compare(FileHeader a, FileHeader b) {
-                String nameA = a.isUnicode() ? a.getFileNameW() : a.getFileNameString();
-                String nameB = b.isUnicode() ? b.getFileNameW() : b.getFileNameString();
-
-                return nameA.compareTo(nameB);
+                return getName(a).compareTo(getName(b));
             }
         });
+    }
+
+    private String getName(FileHeader header) {
+        return header.isUnicode() ? header.getFileNameW() : header.getFileNameString();
     }
 
     @Override
@@ -56,7 +56,26 @@ public class RarParser implements Parser {
     @Override
     public InputStream getPage(int num) throws IOException {
         try {
-            return mArchive.getInputStream(mHeaders.get(num));
+            FileHeader header = mHeaders.get(num);
+
+            if (mCacheDir != null) {
+                String name = getName(header);
+                File cacheFile = new File(mCacheDir, Utils.MD5(name));
+                if (!cacheFile.exists()) {
+                    FileOutputStream os = new FileOutputStream(cacheFile);
+                    try {
+                        mArchive.extractFile(header, os);
+                    }
+                    catch (Exception e) {
+                        os.close();
+                        cacheFile.delete();
+                        throw e;
+                    }
+                    os.close();
+                }
+                return new FileInputStream(cacheFile);
+            }
+            return mArchive.getInputStream(header);
         }
         catch (RarException e) {
             throw new IOException("unable to parse rar");
@@ -65,11 +84,29 @@ public class RarParser implements Parser {
 
     @Override
     public void destroy() throws IOException {
+        if (mCacheDir != null) {
+            for (File f : mCacheDir.listFiles()) {
+                f.delete();
+            }
+            mCacheDir.delete();
+        }
         mArchive.close();
     }
 
     @Override
     public String getType() {
         return "rar";
+    }
+
+    public void setCacheDirectory(File cacheDirectory) {
+        mCacheDir = cacheDirectory;
+        if (!mCacheDir.exists()) {
+            mCacheDir.mkdir();
+        }
+        if (mCacheDir.listFiles() != null) {
+            for (File f : mCacheDir.listFiles()) {
+                f.delete();
+            }
+        }
     }
 }
