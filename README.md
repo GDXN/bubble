@@ -1,5 +1,7 @@
 # Bubble
 
+![screenshot](https://raw.githubusercontent.com/nkanaev/bubble/master/promo.jpg)
+
 Android comic book reader.
 
 ## License
