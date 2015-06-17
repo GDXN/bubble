@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.concurrent.Executors;
 
 
 public class ReaderFragment extends Fragment implements View.OnTouchListener {
@@ -46,10 +47,8 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
     private SharedPreferences mPreferences;
     private GestureDetector mGestureDetector;
     private boolean mIsFullscreen;
-    private int mImageSize;
     private int mCurrentPage;
     private String mFilename;
-    private boolean mSingleTap;
 
     static {
         RESOURCE_VIEW_MODE = new HashMap<Integer, Constants.PageViewMode>();
@@ -67,7 +66,9 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
         return fragment;
     }
 
-    public ReaderFragment() {}
+    public ReaderFragment() {
+        System.gc();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,13 +82,9 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
 
         mCurrentPage = Math.max(1, Math.min(mCurrentPage, mParser.numPages()));
 
-        int width = Utils.getDeviceWidth(getActivity());
-        int height = Utils.getDeviceHeight(getActivity());
-        mImageSize = Math.max(width, height) * 2;
-
-        mComicHandler = new LocalComicHandler(mParser, mImageSize);
+        mComicHandler = new LocalComicHandler(mParser);
         mPicasso = new Picasso.Builder(getActivity())
-                .memoryCache(new LruCache(Utils.calculateMemorySize(getActivity(), 10)))
+                .memoryCache(new LruCache(Utils.calculateMemorySize(getActivity(), 5)))
                 .addRequestHandler(mComicHandler)
                 .build();
         mPagerAdapter = new ComicPagerAdapter();
@@ -104,7 +101,6 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
             File cacheDir = new File(getActivity().getExternalCacheDir(), "c" + Utils.MD5(path));
             ((RarParser)mParser).setCacheDirectory(cacheDir);
         }
-
 
         setHasOptionsMenu(true);
     }

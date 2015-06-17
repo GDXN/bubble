@@ -126,7 +126,7 @@ public final class Utils {
 
     public static int calculateMemorySize(Context context, int percentage) {
         ActivityManager activityManager = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE);
-        int memoryClass = activityManager.getMemoryClass();
+        int memoryClass = activityManager.getLargeMemoryClass();
         return 1024 * 1024 * memoryClass / percentage;
     }
 
