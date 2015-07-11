@@ -22,6 +22,7 @@ import com.nkanaev.comics.parsers.Parser;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.LruCache;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -83,7 +84,7 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
 
         mComicHandler = new LocalComicHandler(mParser);
         mPicasso = new Picasso.Builder(getActivity())
-                .memoryCache(new LruCache(Utils.calculateMemorySize(getActivity(), 5)))
+//                .memoryCache(new LruCache(Utils.calculateMemorySize(getActivity(), 5)))
                 .addRequestHandler(mComicHandler)
                 .build();
         mPagerAdapter = new ComicPagerAdapter();
@@ -215,6 +216,7 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
             container.addView(layout);
 
             mPicasso.load(mComicHandler.getPageUri(position))
+                    .memoryPolicy(MemoryPolicy.NO_STORE)
                     .into(pageImageView, new MyCallback(layout, position));
 
             return layout;
