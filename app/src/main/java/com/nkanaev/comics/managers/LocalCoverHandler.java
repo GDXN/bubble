@@ -37,7 +37,9 @@ public class LocalCoverHandler extends RequestHandler {
     @Override
     public Result load(Request data, int networkPolicy) throws IOException {
         String path = getCoverPath(data.uri);
-        return new Result(BitmapFactory.decodeFile(path), Picasso.LoadedFrom.DISK);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        return new Result(BitmapFactory.decodeFile(path, options), Picasso.LoadedFrom.DISK);
     }
 
     private String getCoverPath(Uri comicUri) throws IOException {
