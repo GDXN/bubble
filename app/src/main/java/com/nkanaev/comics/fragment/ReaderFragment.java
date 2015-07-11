@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.content.Context;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.support.v4.app.Fragment;
@@ -111,6 +112,7 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
 
         mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
