@@ -59,7 +59,7 @@ public class LocalCoverHandler extends RequestHandler {
             Bitmap result = BitmapFactory.decodeStream(stream, null, options);
 
             FileOutputStream outputStream = new FileOutputStream(coverFile);
-            result.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
+            result.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
             outputStream.close();
         }
 
