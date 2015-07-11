@@ -6,6 +6,8 @@
 
         <item name="android:actionBarStyle">@style/ReaderActionBar</item>
         <item name="actionBarStyle">@style/ReaderActionBar</item>
+
+        <item name="android:colorPrimaryDark">@color/dark_semitransparent</item>
     </style>
 
     <style name="ReaderActionBar" parent="@style/Widget.AppCompat.ActionBar">

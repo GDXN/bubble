@@ -28,19 +28,13 @@ public class CoverImageView extends ImageView {
         scale();
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        scale();
-    }
-
     private void scale() {
         Drawable drawable = getDrawable();
         if (drawable != null) {
             int width = drawable.getIntrinsicWidth();
             int height = drawable.getIntrinsicHeight();
             double ratio = (double)height/(double)width;
-            if (Math.abs(ratio - 1.5d) < 0.1) {
+            if (1.2 <= ratio && ratio <= 1.5) {
                 setScaleType(ScaleType.CENTER_CROP);
             }
             else {

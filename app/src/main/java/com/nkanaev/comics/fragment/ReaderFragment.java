@@ -26,7 +26,6 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.concurrent.Executors;
 
 
 public class ReaderFragment extends Fragment implements View.OnTouchListener {
