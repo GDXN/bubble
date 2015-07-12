@@ -51,6 +51,7 @@ public class PageImageView extends ImageView {
         super.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                mEdited = true;
                 mScaleGestureDetector.onTouchEvent(event);
                 mDragGestureDetector.onTouchEvent(event);
                 if (mOuterTouchListener != null) mOuterTouchListener.onTouch(v, event);
@@ -77,9 +78,9 @@ public class PageImageView extends ImageView {
     }
 
     private void scale() {
-        if (mEdited) return;
         Drawable drawable = getDrawable();
         if (drawable == null) return;
+        if (mEdited) return;
 
         int dwidth = drawable.getIntrinsicWidth();
         int dheight = drawable.getIntrinsicHeight();
@@ -116,7 +117,7 @@ public class PageImageView extends ImageView {
 
         mMinScale = Math.min(
                 getWidth() * 0.75f / getDrawable().getIntrinsicWidth(),
-                getHeight() * 0.75f /getDrawable().getIntrinsicHeight());
+                getHeight() * 0.75f / getDrawable().getIntrinsicHeight());
         mMaxScale = Math.max(
                 getWidth() * 2 / getDrawable().getIntrinsicWidth(),
                 getHeight() * 2 /getDrawable().getIntrinsicHeight());
