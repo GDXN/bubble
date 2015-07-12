@@ -40,3 +40,6 @@ proguard/
 import-summary.txt
 
 .DS_Store
+
+app/src/main/res/values/secret.xml
+app/fabric.properties

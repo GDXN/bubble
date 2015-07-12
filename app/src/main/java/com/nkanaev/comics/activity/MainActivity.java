@@ -7,12 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import com.crashlytics.android.Crashlytics;
 import com.nkanaev.comics.fragment.BrowserFragment;
 import com.nkanaev.comics.fragment.LibraryFragment;
 import com.nkanaev.comics.R;
 
 import com.nkanaev.comics.view.AboutDialog;
 import com.nkanaev.comics.view.MenuLayout;
+import io.fabric.sdk.android.Fabric;
 
 
 public class MainActivity extends ActionBarActivity
@@ -25,6 +27,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.layout_main);
 
         if (savedInstanceState == null) {
