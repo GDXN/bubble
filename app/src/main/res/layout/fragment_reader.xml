@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,4 +12,39 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"/>
 
-</LinearLayout>
+    <LinearLayout
+            android:id="@+id/pageNavLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="40dp"
+            android:orientation="vertical"
+            android:background="@drawable/reader_nav_bg"
+            android:gravity="center_horizontal"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+        <TextView
+                android:id="@+id/pageNavTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/card_text"/>
+
+        <SeekBar
+                android:id="@+id/pageSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="20dp"
+                android:minHeight="2dp"
+                android:maxHeight="2dp"
+                android:thumb="@drawable/reader_nav_thumb"
+                android:thumbOffset="6dp"
+                android:progressDrawable="@drawable/reader_nav_progress"/>
+
+    </LinearLayout>
+
+</FrameLayout>

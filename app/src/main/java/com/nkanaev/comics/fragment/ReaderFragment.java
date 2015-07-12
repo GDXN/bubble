@@ -1,6 +1,7 @@
 package com.nkanaev.comics.fragment;
 
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.content.Context;
 import android.support.v7.app.ActionBar;
@@ -38,18 +39,23 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
     public static final String PARAM_FILE = "readerFile";
     public static final String PARAM_PAGE = "readerOpenMode";
 
-    private Parser mParser;
     private ViewPager mViewPager;
+    private LinearLayout mPageNavLayout;
+    private SeekBar mPageSeekBar;
+    private TextView mPageNavTextView;
     private ComicPagerAdapter mPagerAdapter;
-    private Picasso mPicasso;
-    private LocalComicHandler mComicHandler;
-    private Constants.PageViewMode mPageViewMode;
-    private final static HashMap<Integer, Constants.PageViewMode> RESOURCE_VIEW_MODE;
     private SharedPreferences mPreferences;
     private GestureDetector mGestureDetector;
+
+    private final static HashMap<Integer, Constants.PageViewMode> RESOURCE_VIEW_MODE;
     private boolean mIsFullscreen;
     private int mCurrentPage;
     private String mFilename;
+    private Constants.PageViewMode mPageViewMode;
+
+    private Parser mParser;
+    private Picasso mPicasso;
+    private LocalComicHandler mComicHandler;
 
     static {
         RESOURCE_VIEW_MODE = new HashMap<Integer, Constants.PageViewMode>();
@@ -110,6 +116,27 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_reader, container, false);
 
+        mPageNavLayout = (LinearLayout) view.findViewById(R.id.pageNavLayout);
+        mPageSeekBar = (SeekBar) mPageNavLayout.findViewById(R.id.pageSeekBar);
+        mPageSeekBar.setMax(mParser.numPages() - 1);
+        mPageSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser)
+                    setCurrentPage(progress + 1);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        mPageNavTextView = (TextView) mPageNavLayout.findViewById(R.id.pageNavTextView);
         mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOffscreenPageLimit(3);
@@ -120,11 +147,23 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
             }
         });
 
+        if (Utils.isKitKatOrLater()) {
+            Resources resources = getActivity().getResources();
+            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                int navBarheight = resources.getDimensionPixelSize(resourceId);
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mPageNavLayout.getLayoutParams();
+                params.bottomMargin = navBarheight + 80;
+                mPageNavLayout.setLayoutParams(params);
+            }
+        }
+
         if (mCurrentPage != -1) {
             setCurrentPage(mCurrentPage);
             mCurrentPage = -1;
         }
         setFullscreen(true);
+        getActionBar().setTitle(mFilename);
 
         return view;
     }
@@ -187,11 +226,13 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
 
     private void setCurrentPage(int page) {
         mViewPager.setCurrentItem(page - 1);
-        String title = new StringBuilder()
-                .append("(").append(page).append("/").append(mParser.numPages()).append(") ")
-                .append(mFilename)
+        String navPage = new StringBuilder()
+                .append(page).append("/").append(mParser.numPages())
                 .toString();
-        getActionBar().setTitle(title);
+
+        mPageNavTextView.setText(navPage);
+
+        mPageSeekBar.setProgress(page-1);
     }
 
     private class ComicPagerAdapter extends PagerAdapter {
@@ -330,6 +371,8 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
                 flag |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             }
             mViewPager.setSystemUiVisibility(flag);
+
+            mPageNavLayout.setVisibility(View.INVISIBLE);
         }
         else {
             if (actionBar != null) actionBar.show();
@@ -341,6 +384,8 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
                 flag |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
             }
             mViewPager.setSystemUiVisibility(flag);
+
+            mPageNavLayout.setVisibility(View.VISIBLE);
         }
     }
 
