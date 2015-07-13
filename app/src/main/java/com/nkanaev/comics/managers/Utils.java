@@ -69,7 +69,7 @@ public final class Utils {
     }
 
     public static boolean isImage(String filename) {
-        return filename.toLowerCase().matches(".*\\.(jpg|bmp|gif|png)$");
+        return filename.toLowerCase().matches(".*\\.(jpg|jpeg|bmp|gif|png)$");
     }
 
     public static boolean isArchive(String filename) {
