@@ -31,7 +31,8 @@
                 android:id="@+id/pageNavTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/card_text"/>
+                android:textSize="@dimen/card_text"
+                android:textColor="@color/light"/>
 
         <SeekBar
                 android:id="@+id/pageSeekBar"

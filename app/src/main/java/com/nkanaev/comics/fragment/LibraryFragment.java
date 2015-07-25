@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,7 +17,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.R;
-import com.nkanaev.comics.activity.LibraryBrowserActivity;
+import com.nkanaev.comics.activity.MainActivity;
 import com.nkanaev.comics.managers.LocalCoverHandler;
 import com.nkanaev.comics.managers.Scanner;
 import com.nkanaev.comics.managers.Utils;
@@ -69,8 +68,6 @@ public class LibraryFragment extends Fragment
         mDirectorySelectDialog.setCurrentDirectory(Environment.getExternalStorageDirectory());
         mDirectorySelectDialog.setOnDirectorySelectListener(this);
 
-        getActivity().setTitle(R.string.menu_library);
-
         setHasOptionsMenu(true);
     }
 
@@ -102,11 +99,14 @@ public class LibraryFragment extends Fragment
             mDirectorySelectDialog.show();
         }
 
+        getActivity().setTitle(R.string.menu_library);
+
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.library, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -165,9 +165,9 @@ public class LibraryFragment extends Fragment
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Comic comic = mComics.get(position);
 
-        Intent intent = new Intent(getActivity(), LibraryBrowserActivity.class);
-        intent.putExtra(LibraryBrowserFragment.PARAM_PATH, comic.getFile().getParent());
-        startActivity(intent);
+        String path = comic.getFile().getParent();
+        LibraryBrowserFragment fragment = LibraryBrowserFragment.create(path);
+        ((MainActivity)getActivity()).pushFragment(fragment);
     }
 
     @Override

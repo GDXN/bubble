@@ -4,12 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.*;
 import android.support.v7.widget.SearchView;
@@ -61,8 +62,6 @@ public class LibraryBrowserFragment extends Fragment
                 .addRequestHandler(new LocalCoverHandler(ctx))
                 .build();
 
-        getActivity().setTitle(new File(path).getName());
-
         setHasOptionsMenu(true);
     }
 
@@ -75,8 +74,8 @@ public class LibraryBrowserFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_librarybrowser, container, false);
-
         final BrowserAdapter adapter = new BrowserAdapter();
+
         int deviceWidth = Utils.getDeviceWidth(getActivity());
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_comic_column_width);
         int numColumns = Math.round((float) deviceWidth / columnWidth);
@@ -85,6 +84,8 @@ public class LibraryBrowserFragment extends Fragment
         mGridView.setAdapter(adapter);
         mGridView.setOnItemClickListener(this);
         mGridView.setNumColumns(numColumns);
+
+        getActivity().setTitle(new File(getArguments().getString(PARAM_PATH)).getName());
 
         return view;
     }
@@ -102,6 +103,7 @@ public class LibraryBrowserFragment extends Fragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.browser, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);

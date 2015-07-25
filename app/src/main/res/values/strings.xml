@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Bubble</string>
+    <string name="app_description">Android comic reader</string>
+
     <string name="action_refresh">Refresh</string>
     <string name="action_settings">Settings</string>
 
@@ -28,10 +30,6 @@
     <string name="search">Search</string>
 
     <string name="browser_search_hint">Please enter a search term</string>
-
-    <string name="dialog_about_title">Bubble</string>
-    <string name="dialog_about_subtitle">Android comic reader</string>
-    <string name="dialog_about_close">Got it</string>
 
     <string name="reload">Reload</string>
 </resources>

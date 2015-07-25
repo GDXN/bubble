@@ -9,6 +9,7 @@
 
     <color name="light">#F8F8F8</color>
     <color name="text">#353E4E</color>
+    <color name="text_drawer">#5d5d5d</color>
     <color name="dark">#161616</color>
     <color name="background">#E9E9EA</color>
 

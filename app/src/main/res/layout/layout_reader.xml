@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
     <FrameLayout
             android:id="@+id/content_frame_reader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-</LinearLayout>
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_reader"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/dark_semitransparent"
+            android:layout_gravity="center_horizontal|top"/>
+
+</FrameLayout>

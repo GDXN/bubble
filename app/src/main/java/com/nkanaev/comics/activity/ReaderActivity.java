@@ -2,8 +2,13 @@ package com.nkanaev.comics.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.fragment.ReaderFragment;
 
@@ -16,6 +21,12 @@ public class ReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_reader);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_reader);
+        setSupportActionBar(toolbar);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+        params.setMargins(0, getStatusBarHeight(), 0, 0);
+        toolbar.setLayoutParams(params);
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -30,7 +41,10 @@ public class ReaderActivity extends AppCompatActivity {
                     .commit();
         }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -56,5 +70,14 @@ public class ReaderActivity extends AppCompatActivity {
         setResult(ReaderFragment.RESULT, intent);
 
         super.finish();
+    }
+
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="ReaderTheme" parent="AppTheme">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="windowActionBarOverlay">true</item>
-
-        <item name="android:actionBarStyle">@style/ReaderActionBar</item>
-        <item name="actionBarStyle">@style/ReaderActionBar</item>
-
-        <item name="android:colorPrimaryDark">@color/dark_semitransparent</item>
-    </style>
-
-    <style name="ReaderActionBar" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/dark_semitransparent</item>
-        <item name="background">@color/dark_semitransparent</item>
-        <item name="android:itemTextAppearance">@style/ReaderMenuTextAppearance</item>
-    </style>
-
-    <style name="ReaderMenuTextAppearance" parent="@style/TextAppearance.AppCompat.Menu">
-        <item name="android:textColor">@color/light</item>
+        <item name="colorPrimaryDark">@color/dark_semitransparent</item>
     </style>
 </resources>
