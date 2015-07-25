@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.content.Context;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -163,7 +164,7 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
             mCurrentPage = -1;
         }
         setFullscreen(true);
-        getActionBar().setTitle(mFilename);
+        getActivity().setTitle(mFilename);
 
         return view;
     }
@@ -346,7 +347,7 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
     }
 
     private ActionBar getActionBar() {
-        return ((ActionBarActivity)getActivity()).getSupportActionBar();
+        return ((AppCompatActivity)getActivity()).getSupportActionBar();
     }
 
     private void setFullscreen(boolean fullscreen) {
