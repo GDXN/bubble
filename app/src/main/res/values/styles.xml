@@ -4,13 +4,13 @@
         <item name="android:actionBarStyle">@style/MyActionBarStyle</item>
         <item name="actionBarStyle">@style/MyActionBarStyle</item>
 
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primaryDark</item>
-        <item name="android:colorAccent">@color/accent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/accent</item>
 
         <item name="android:textColorPrimary">@color/light</item>
 
-        <item name="android:colorControlHighlight">@color/background</item>
+        <item name="colorControlHighlight">@color/background</item>
     </style>
 
     <style name="MyActionBarStyle" parent="@style/Widget.AppCompat.ActionBar">
