@@ -8,23 +8,26 @@
         android:layout_height="fill_parent"
         android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
         <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
-                android:background="?attr/colorPrimary"/>
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetLeft="72dp"
+                app:contentInsetStart="72dp"/>
 
         <FrameLayout
                 android:id="@+id/content_frame"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
+                android:layout_height="fill_parent"
+                android:foreground="?android:windowContentOverlay"/>
 
-    </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.NavigationView
             android:id="@+id/navigation_view"

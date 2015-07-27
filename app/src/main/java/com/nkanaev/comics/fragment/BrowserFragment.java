@@ -1,16 +1,15 @@
 package com.nkanaev.comics.fragment;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.activity.ReaderActivity;
 import com.nkanaev.comics.managers.Utils;
@@ -80,6 +79,28 @@ public class BrowserFragment extends Fragment
         }
     }
 
+    private void setIcon(View convertView, File file) {
+        ImageView view = (ImageView) convertView.findViewById(R.id.directory_row_icon);
+        int colorRes = R.color.circle_grey;
+        if (file.isDirectory()) {
+            view.setImageResource(R.drawable.ic_folder_white_24dp);
+        }
+        else {
+            view.setImageResource(R.drawable.ic_file_document_box_white_24dp);
+
+            String name = file.getName();
+            if (Utils.isZip(name)) {
+                colorRes = R.color.circle_green;
+            }
+            else if (Utils.isRar(name)) {
+                colorRes = R.color.circle_red;
+            }
+        }
+
+        GradientDrawable shape = (GradientDrawable) view.getBackground();
+        shape.setColor(getResources().getColor(colorRes));
+    }
+
     private final class DirectoryAdapter extends BaseAdapter {
         @Override
         public int getCount() {
@@ -102,14 +123,17 @@ public class BrowserFragment extends Fragment
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.row_directory, parent, false);
             }
 
+            File file = mSubdirs[position];
             TextView textView = (TextView) convertView.findViewById(R.id.directory_row_text);
 
             if (position == 0 && !mCurrentDir.getAbsolutePath().equals(mRootDir.getAbsolutePath())) {
                 textView.setText("..");
             }
             else {
-                textView.setText(mSubdirs[position].getName());
+                textView.setText(file.getName());
             }
+
+            setIcon(convertView, file);
 
             return convertView;
         }

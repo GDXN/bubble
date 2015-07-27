@@ -3,21 +3,23 @@
               android:orientation="horizontal"
               android:gravity="center_vertical"
               android:layout_width="match_parent"
-              android:layout_height="@dimen/dialog_directory_row_height"
-              android:paddingLeft="24dp"
-              android:paddingRight="24dp"
-              android:paddingStart="24dp"
-              android:paddingEnd="24dp">
+              android:layout_height="wrap_content"
+              android:padding="16dp">
 
     <ImageView
-            android:id="@+id/directory_row_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:id="@+id/directory_row_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circle"
+            android:scaleType="center"/>
 
     <TextView
             android:id="@+id/directory_row_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text"/>
+            android:textColor="@color/text"
+            android:textSize="18sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"/>
 
 </LinearLayout>

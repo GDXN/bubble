@@ -72,8 +72,16 @@ public final class Utils {
         return filename.toLowerCase().matches(".*\\.(jpg|jpeg|bmp|gif|png)$");
     }
 
+    public static boolean isZip(String filename) {
+        return filename.toLowerCase().matches(".*\\.(zip|cbz)$");
+    }
+
+    public static boolean isRar(String filename) {
+        return filename.toLowerCase().matches(".*\\.(rar|cbr)$");
+    }
+
     public static boolean isArchive(String filename) {
-        return filename.toLowerCase().matches(".*\\.(zip|cbz|rar|cbr)$");
+        return isZip(filename) || isRar(filename);
     }
 
     public static int getDeviceWidth(Context context) {
