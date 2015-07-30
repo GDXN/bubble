@@ -8,7 +8,6 @@ import android.graphics.Matrix;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.ImageView;
@@ -40,7 +39,6 @@ public class PageImageView extends ImageView {
 
     public void setViewMode(Constants.PageViewMode viewMode) {
         mViewMode = viewMode;
-        scale();
     }
 
     private void init() {
@@ -120,12 +118,17 @@ public class PageImageView extends ImageView {
             mImageMatrix.postTranslate(0, 0);
         }
 
-        mMinScale = Math.min(
-                getWidth() * 0.75f / getDrawable().getIntrinsicWidth(),
-                getHeight() * 0.75f / getDrawable().getIntrinsicHeight());
-        mMaxScale = Math.max(
-                getWidth() * 2 / getDrawable().getIntrinsicWidth(),
-                getHeight() * 2 /getDrawable().getIntrinsicHeight());
+        // calculate min/max scale
+        float heightRatio = (float)vheight / dheight;
+        float w = dwidth * heightRatio;
+        if (w < vwidth) {
+            mMinScale = Math.min(dheight, vheight) * 0.75f / dheight;
+            mMaxScale = Math.max(dwidth, vwidth) * 1.5f / dwidth;
+        }
+        else {
+            mMinScale = Math.min(dwidth, vwidth) * 0.75f / dwidth;
+            mMaxScale = Math.max(dheight, vheight) * 1.5f / dheight;
+        }
 
         setImageMatrix(mImageMatrix);
     }
@@ -134,15 +137,27 @@ public class PageImageView extends ImageView {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             mImageMatrix.getValues(mMatrixValues);
-            if (mMaxScale - mMatrixValues[Matrix.MSCALE_X] < 0.001 && detector.getScaleFactor() > 1) {
-                return false;
+
+            float scale = mMatrixValues[Matrix.MSCALE_X];
+            float scaleFactor = detector.getScaleFactor();
+            float scaleNew = scale * scaleFactor;
+            boolean scalable = true;
+
+            if (scaleFactor > 1 && mMaxScale - scaleNew < 0) {
+                scaleFactor = mMaxScale / scale;
+                scalable = false;
+            }
+            else if (scaleFactor < 1 && mMinScale - scaleNew > 0) {
+                scaleFactor = mMinScale / scale;
+                scalable = false;
             }
 
             mImageMatrix.postScale(
-                    detector.getScaleFactor(), detector.getScaleFactor(),
+                    scaleFactor, scaleFactor,
                     detector.getFocusX(), detector.getFocusY());
             setImageMatrix(mImageMatrix);
-            return true;
+
+            return scalable;
         }
     }
 
@@ -248,10 +263,6 @@ public class PageImageView extends ImageView {
             return matrix;
 
         matrix.getValues(mMatrixValues);
-        float scale = mMatrixValues[Matrix.MSCALE_X];
-        scale = Math.max(mMinScale, Math.min(scale, mMaxScale));
-        mMatrixValues[Matrix.MSCALE_X] = scale;
-        mMatrixValues[Matrix.MSCALE_Y] = scale;
 
         Point imageSize = computeCurrentImageSize();
 
