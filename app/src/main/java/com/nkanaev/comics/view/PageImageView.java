@@ -1,18 +1,19 @@
 package com.nkanaev.comics.view;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
 import android.os.Build;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
+import android.util.Log;
+import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.widget.ImageView;
 
+import android.widget.OverScroller;
 import com.nkanaev.comics.Constants;
 
 public class PageImageView extends ImageView {
@@ -23,6 +24,7 @@ public class PageImageView extends ImageView {
     private OnTouchListener mOuterTouchListener;
     private ScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mDragGestureDetector;
+    private OverScroller mScroller;
     private float[] mMatrixValues = new float[9];
     private float mMinScale, mMaxScale;
 
@@ -58,6 +60,9 @@ public class PageImageView extends ImageView {
                 return true;
             }
         });
+
+        mScroller = new OverScroller(getContext());
+        mScroller.setFriction(ViewConfiguration.getScrollFriction() * 2);
     }
 
     @Override
@@ -143,11 +148,91 @@ public class PageImageView extends ImageView {
 
     private class PrivateDragListener extends SimpleOnGestureListener {
         @Override
+        public boolean onDown(MotionEvent e) {
+            mScroller.forceFinished(true);
+            return true;
+        }
+
+        @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             mImageMatrix.postTranslate(-distanceX, -distanceY);
             setImageMatrix(mImageMatrix);
             return true;
         }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Point imageSize = computeCurrentImageSize();
+            Point offset = computeCurrentOffset();
+
+            int minX = -imageSize.x - PageImageView.this.getWidth();
+            int minY = -imageSize.y - PageImageView.this.getHeight();
+            int maxX = 0;
+            int maxY = 0;
+
+            if (offset.x > 0) {
+                minX = offset.x;
+                maxX = offset.x;
+            }
+            if (offset.y > 0) {
+                minY = offset.y;
+                maxY = offset.y;
+            }
+
+            mScroller.fling(
+                    offset.x, offset.y,
+                    (int) velocityX, (int) velocityY,
+                    minX, maxX, minY, maxY);
+            ViewCompat.postInvalidateOnAnimation(PageImageView.this);
+            return true;
+        }
+    }
+
+    @Override
+    public void computeScroll() {
+        if (!mScroller.isFinished() && mScroller.computeScrollOffset()) {
+            int curX = mScroller.getCurrX();
+            int curY = mScroller.getCurrY();
+
+            mImageMatrix.getValues(mMatrixValues);
+            mMatrixValues[Matrix.MTRANS_X] = curX;
+            mMatrixValues[Matrix.MTRANS_Y] = curY;
+            mImageMatrix.setValues(mMatrixValues);
+            setImageMatrix(mImageMatrix);
+            ViewCompat.postInvalidateOnAnimation(this);
+        }
+        super.computeScroll();
+    }
+
+    private Point computeCurrentImageSize() {
+        final Point size = new Point();
+        Drawable d = getDrawable();
+        if (d != null) {
+            mImageMatrix.getValues(mMatrixValues);
+
+            float scale = mMatrixValues[Matrix.MSCALE_X];
+            float width = d.getIntrinsicWidth() * scale;
+            float height = d.getIntrinsicHeight() * scale;
+
+            size.set((int)width, (int)height);
+
+            return size;
+        }
+
+        size.set(0, 0);
+        return size;
+    }
+
+    private Point computeCurrentOffset() {
+        final Point offset = new Point();
+
+        mImageMatrix.getValues(mMatrixValues);
+        float transX = mMatrixValues[Matrix.MTRANS_X];
+        float transY = mMatrixValues[Matrix.MTRANS_Y];
+
+        offset.set((int)transX, (int)transY);
+
+        return offset;
     }
 
     @Override
@@ -168,10 +253,12 @@ public class PageImageView extends ImageView {
         mMatrixValues[Matrix.MSCALE_X] = scale;
         mMatrixValues[Matrix.MSCALE_Y] = scale;
 
-        float imageWidth = getDrawable().getIntrinsicWidth() * scale;
-        float imageHeight = getDrawable().getIntrinsicHeight() * scale;
-        float maxTransX = imageWidth - getWidth();
-        float maxTransY = imageHeight - getHeight();
+        Point imageSize = computeCurrentImageSize();
+
+        int imageWidth = imageSize.x;
+        int imageHeight = imageSize.y;
+        int maxTransX = imageWidth - getWidth();
+        int maxTransY = imageHeight - getHeight();
 
         if (imageWidth > getWidth())
             mMatrixValues[Matrix.MTRANS_X] = Math.min(0, Math.max(mMatrixValues[Matrix.MTRANS_X], -maxTransX));
@@ -190,18 +277,18 @@ public class PageImageView extends ImageView {
     public boolean canScrollHorizontally(int direction) {
         if (getDrawable() == null)
             return false;
+
         mImageMatrix.getValues(mMatrixValues);
-        float x = mMatrixValues[Matrix.MTRANS_X];
-        float scale = mMatrixValues[Matrix.MSCALE_X];
-        float imageWidth = getDrawable().getIntrinsicWidth() * scale;
 
-        if (imageWidth < getWidth()) {
+        float imageWidth = computeCurrentImageSize().x;
+        float offsetX = computeCurrentOffset().x;
+
+        if (offsetX >= 0 && direction < 0) {
+            int z = 0;
             return false;
-
-        } else if (x >= -1 && direction < 0) {
-            return false;
-
-        } else if (Math.abs(x) + getWidth() + 1 >= imageWidth && direction > 0) {
+        }
+        else if (Math.abs(offsetX) + getWidth() >= imageWidth && direction > 0) {
+            int z = 0;
             return false;
         }
         return true;
