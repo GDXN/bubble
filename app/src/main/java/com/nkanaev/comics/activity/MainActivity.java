@@ -58,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
             LibraryFragment groupBrowserFragment = new LibraryFragment();
             setFragment(groupBrowserFragment);
         }
+        else {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 1) {
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
+            }
+        }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -129,10 +135,10 @@ public class MainActivity extends AppCompatActivity {
                         setFragment(mAboutFragment);
                         break;
                 }
-                menuItem.setChecked(true);
                 if (mPreviousMenuItem != null) {
                     mPreviousMenuItem.setChecked(false);
                 }
+                menuItem.setChecked(true);
                 mPreviousMenuItem = menuItem;
                 mDrawerLayout.closeDrawers();
                 return true;
