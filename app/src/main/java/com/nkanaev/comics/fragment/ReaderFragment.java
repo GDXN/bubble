@@ -92,7 +92,6 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
 
         mComicHandler = new LocalComicHandler(mParser);
         mPicasso = new Picasso.Builder(getActivity())
-//                .memoryCache(new LruCache(Utils.calculateMemorySize(getActivity(), 5)))
                 .addRequestHandler(mComicHandler)
                 .build();
         mPagerAdapter = new ComicPagerAdapter();
@@ -106,7 +105,15 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
 
         // workaround: extract rar achive
         if (mParser instanceof RarParser) {
-            File cacheDir = new File(getActivity().getExternalCacheDir(), "c" + Utils.MD5(path));
+            File cacheDir = new File(getActivity().getExternalCacheDir(), "c");
+            if (!cacheDir.exists()) {
+                cacheDir.mkdir();
+            }
+            else {
+                for (File f : cacheDir.listFiles()) {
+                    f.delete();
+                }
+            }
             ((RarParser)mParser).setCacheDirectory(cacheDir);
         }
 
