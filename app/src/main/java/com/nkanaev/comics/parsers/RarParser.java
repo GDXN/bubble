@@ -15,7 +15,6 @@ public class RarParser implements Parser {
     private ArrayList<FileHeader> mHeaders = new ArrayList<FileHeader>();
     private Archive mArchive;
     private File mCacheDir;
-    private final Object mSync = new Object();
 
     @Override
     public void parse(File file) throws IOException {
@@ -62,7 +61,12 @@ public class RarParser implements Parser {
             if (mCacheDir != null) {
                 String name = getName(header);
                 File cacheFile = new File(mCacheDir, Utils.MD5(name));
-                synchronized (mSync) {
+
+                if (cacheFile.exists()) {
+                    return new FileInputStream(cacheFile);
+                }
+
+                synchronized (this) {
                     if (!cacheFile.exists()) {
                         FileOutputStream os = new FileOutputStream(cacheFile);
                         try {
