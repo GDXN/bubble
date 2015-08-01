@@ -21,6 +21,9 @@ import com.mikepenz.aboutlibraries.ui.LibsFragment;
 import com.nkanaev.comics.fragment.BrowserFragment;
 import com.nkanaev.comics.fragment.LibraryFragment;
 import com.nkanaev.comics.R;
+import com.nkanaev.comics.managers.LocalCoverHandler;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private int mCurrentNavItem;
+    private Picasso mPicasso;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        mPicasso = new Picasso.Builder(this)
+                .addRequestHandler(new LocalCoverHandler(this))
+                .build();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         setupNavigationView(navigationView);
@@ -89,6 +97,10 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    public Picasso getPicasso() {
+        return mPicasso;
     }
 
     private void setFragment(Fragment fragment) {

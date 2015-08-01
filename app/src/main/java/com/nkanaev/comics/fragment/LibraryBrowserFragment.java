@@ -16,6 +16,7 @@ import android.widget.*;
 import android.support.v7.widget.SearchView;
 
 import com.nkanaev.comics.R;
+import com.nkanaev.comics.activity.MainActivity;
 import com.nkanaev.comics.activity.ReaderActivity;
 import com.nkanaev.comics.managers.LocalCoverHandler;
 import com.nkanaev.comics.managers.Utils;
@@ -57,24 +58,16 @@ public class LibraryBrowserFragment extends Fragment
         mComics = Storage.getStorage(getActivity()).listComics(path);
         Collections.sort(mComics);
         filterContent();
-        Context ctx = getActivity();
-        mPicasso = new Picasso.Builder(ctx)
-                .addRequestHandler(new LocalCoverHandler(ctx))
-                .build();
 
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onDestroy() {
-        mPicasso.shutdown();
-        super.onDestroy();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_librarybrowser, container, false);
         final BrowserAdapter adapter = new BrowserAdapter();
+
+        mPicasso = ((MainActivity) getActivity()).getPicasso();
 
         int deviceWidth = Utils.getDeviceWidth(getActivity());
         int columnWidth = getActivity().getResources().getInteger(R.integer.grid_comic_column_width);

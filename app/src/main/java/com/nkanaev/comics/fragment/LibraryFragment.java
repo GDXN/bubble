@@ -50,11 +50,6 @@ public class LibraryFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Context ctx = getActivity();
-        mPicasso = new Picasso.Builder(ctx)
-                .addRequestHandler(new LocalCoverHandler(ctx))
-                .build();
-
         mStorage = Storage.getStorage(getActivity());
         getComics();
 
@@ -72,14 +67,10 @@ public class LibraryFragment extends Fragment
     }
 
     @Override
-    public void onDestroy() {
-        mPicasso.shutdown();
-        super.onDestroy();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_library, container, false);
+
+        mPicasso = ((MainActivity) getActivity()).getPicasso();
 
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragmentLibraryLayout);
         mRefreshLayout.setColorSchemeColors(R.color.primary);
