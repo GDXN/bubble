@@ -3,16 +3,16 @@ package com.nkanaev.comics.activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
-import android.support.v7.widget.Toolbar;
 
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.aboutlibraries.entity.Library;
@@ -28,12 +28,11 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private final static String  CURRENT_MENU_ITEM = "STATE::CURRENT_NAV_ITEM";
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private BrowserFragment mBrowserFragment;
-    private LibraryFragment mLibraryFragment;
-    private LibsFragment mAboutFragment;
-    private MenuItem mPreviousMenuItem;
+    private int mCurrentNavItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,43 +44,45 @@ public class MainActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setElevation(8);
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         setupNavigationView(navigationView);
-        mPreviousMenuItem = navigationView.getMenu().findItem(R.id.drawer_menu_library);
-
-        if (savedInstanceState == null) {
-            LibraryFragment groupBrowserFragment = new LibraryFragment();
-            setFragment(groupBrowserFragment);
-        }
-        else {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            if (fragmentManager.getBackStackEntryCount() > 1) {
-                mDrawerToggle.setDrawerIndicatorEnabled(false);
-            }
-        }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close);
-
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        if (savedInstanceState == null) {
+            setFragment(new LibraryFragment());
+            mCurrentNavItem = R.id.drawer_menu_library;
+            navigationView.getMenu().findItem(mCurrentNavItem).setChecked(true);
+        }
+        else {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
+            }
+            mCurrentNavItem = savedInstanceState.getInt(CURRENT_MENU_ITEM);
 
-        mBrowserFragment = new BrowserFragment();
-        mLibraryFragment = new LibraryFragment();
-        mAboutFragment = createAboutFragment();
+            navigationView.getMenu().findItem(mCurrentNavItem).setChecked(true);
+        }
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(CURRENT_MENU_ITEM, mCurrentNavItem);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -124,22 +125,25 @@ public class MainActivity extends AppCompatActivity {
         view.setNavigationItemSelectedListener(new OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
+                if (mCurrentNavItem == menuItem.getItemId()) {
+                    mDrawerLayout.closeDrawers();
+                    return true;
+                }
+
                 switch (menuItem.getItemId()) {
                     case R.id.drawer_menu_library:
-                        setFragment(mLibraryFragment);
+                        setFragment(new LibraryFragment());
                         break;
                     case R.id.drawer_menu_browser:
-                        setFragment(mBrowserFragment);
+                        setFragment(new BrowserFragment());
                         break;
                     case R.id.drawer_menu_about:
-                        setFragment(mAboutFragment);
+                        setFragment(createAboutFragment());
                         break;
                 }
-                if (mPreviousMenuItem != null) {
-                    mPreviousMenuItem.setChecked(false);
-                }
+
+                mCurrentNavItem = menuItem.getItemId();
                 menuItem.setChecked(true);
-                mPreviousMenuItem = menuItem;
                 mDrawerLayout.closeDrawers();
                 return true;
             }
