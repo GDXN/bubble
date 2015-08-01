@@ -30,9 +30,8 @@ public class LibraryBrowserFragment extends Fragment
     public static final String PARAM_PATH = "browserCurrentPath";
 
     private GridView mGridView;
-    private ListAdapter mAdapter;
     private ArrayList<Comic> mComics;
-    private ArrayList<Comic> mComicsFiltered;
+    private ArrayList<Integer> mDisplayedIndexes;
     private Picasso mPicasso;
     private Comic mCurrentComic;
     private String mFilterSearch = "";
@@ -134,7 +133,7 @@ public class LibraryBrowserFragment extends Fragment
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Comic comic = mComics.get(position);
+        Comic comic = mComics.get(mDisplayedIndexes.get(position));
 
         Intent intent = new Intent(getActivity(), ReaderActivity.class);
         intent.putExtra(ReaderFragment.PARAM_FILE, comic.getFile().getAbsolutePath());
@@ -145,8 +144,9 @@ public class LibraryBrowserFragment extends Fragment
     }
 
     private void filterContent() {
-        mComicsFiltered = new ArrayList<>();
-        for (Comic c: mComics) {
+        mDisplayedIndexes = new ArrayList<>();
+        for (int i = 0; i < mComics.size(); i++) {
+            Comic c = mComics.get(i);
             if (mFilterSearch.length() > 0 && !c.getFile().getName().contains(mFilterSearch))
                 continue;
             if (mFilterRead != R.id.menu_browser_filter_all) {
@@ -155,7 +155,7 @@ public class LibraryBrowserFragment extends Fragment
                 if (mFilterRead == R.id.menu_browser_filter_unread && c.getCurrentPage() != 0)
                     continue;
             }
-            mComicsFiltered.add(c);
+            mDisplayedIndexes.add(i);
         }
 
         if (mGridView != null) mGridView.invalidateViews();
@@ -164,12 +164,12 @@ public class LibraryBrowserFragment extends Fragment
     private final class BrowserAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return mComicsFiltered.size();
+            return mDisplayedIndexes.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mComicsFiltered.get(position);
+            return mDisplayedIndexes.get(position);
         }
 
         @Override
@@ -186,7 +186,7 @@ public class LibraryBrowserFragment extends Fragment
                         .inflate(R.layout.card_comic, parent, false);
             }
 
-            Comic comic = mComicsFiltered.get(position);
+            Comic comic = mComics.get(mDisplayedIndexes.get(position));
 
             CoverImageView coverImageView = (CoverImageView)comicView.findViewById(R.id.comicImageView);
             TextView titleTextView = (TextView)comicView.findViewById(R.id.comicTitleTextView);
