@@ -8,9 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.content.Context;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
 import android.widget.*;
@@ -22,6 +20,8 @@ import com.nkanaev.comics.Constants;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.managers.LocalComicHandler;
 import com.nkanaev.comics.managers.Utils;
+import com.nkanaev.comics.model.Comic;
+import com.nkanaev.comics.model.Storage;
 import com.nkanaev.comics.parsers.ParserFactory;
 import com.nkanaev.comics.parsers.RarParser;
 import com.nkanaev.comics.view.PageImageView;
@@ -39,8 +39,8 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
 
     public static final String RESULT_CURRENT_PAGE = "fragment.reader.currentpage";
 
-    public static final String PARAM_FILE = "readerFile";
-    public static final String PARAM_PAGE = "readerOpenMode";
+    public static final String PARAM_HANDLER = "PARAM_HANDLER";
+    public static final String PARAM_MODE = "PARAM_MODE";
 
     private ViewPager mViewPager;
     private LinearLayout mPageNavLayout;
@@ -61,6 +61,13 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
     private LocalComicHandler mComicHandler;
     private SparseArray<Target> mTargets = new SparseArray<>();
 
+    private Comic mComic;
+
+    public enum Mode {
+        MODE_LIBRARY,
+        MODE_BROWSER;
+    }
+
     static {
         RESOURCE_VIEW_MODE = new HashMap<Integer, Constants.PageViewMode>();
         RESOURCE_VIEW_MODE.put(R.id.view_mode_aspect_fill, Constants.PageViewMode.ASPECT_FILL);
@@ -68,26 +75,41 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
         RESOURCE_VIEW_MODE.put(R.id.view_mode_fit_width, Constants.PageViewMode.FIT_WIDTH);
     }
 
-    public static ReaderFragment create(String comicpath, int page) {
+    public static ReaderFragment create(int comicId) {
         ReaderFragment fragment = new ReaderFragment();
         Bundle args = new Bundle();
-        args.putString(PARAM_FILE, comicpath);
-        args.putInt(PARAM_PAGE, page);
+        args.putSerializable(PARAM_MODE, Mode.MODE_LIBRARY);
+        args.putInt(PARAM_HANDLER, comicId);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public ReaderFragment() {
-        System.gc();
+    public static ReaderFragment create(File comicpath) {
+        ReaderFragment fragment = new ReaderFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(PARAM_MODE, Mode.MODE_BROWSER);
+        args.putSerializable(PARAM_HANDLER, comicpath);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String path = getArguments().getString(PARAM_FILE);
-        mCurrentPage = getArguments().getInt(PARAM_PAGE);
-        File file = new File(path);
+        Bundle bundle = getArguments();
+        Mode mode = (Mode) bundle.getSerializable(PARAM_MODE);
+
+        File file = null;
+        if (mode == Mode.MODE_LIBRARY) {
+            int comicId = bundle.getInt(PARAM_HANDLER);
+            mComic = Storage.getStorage(getActivity()).getComic(comicId);
+            file = mComic.getFile();
+            mCurrentPage = mComic.getCurrentPage();
+        }
+        else if (mode == Mode.MODE_BROWSER) {
+            file = (File) bundle.getSerializable(PARAM_HANDLER);
+        }
         mParser = ParserFactory.create(file);
         mFilename = file.getName();
 
@@ -195,6 +217,14 @@ public class ReaderFragment extends Fragment implements View.OnTouchListener {
                 menu.findItem(R.id.view_mode_fit_width).setChecked(true);
                 break;
         }
+    }
+
+    @Override
+    public void onPause() {
+        if (mComic != null) {
+            mComic.setCurrentPage(getCurrentPage());
+        }
+        super.onPause();
     }
 
     @Override

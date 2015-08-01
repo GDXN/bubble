@@ -74,7 +74,8 @@ public class BrowserFragment extends Fragment
         }
         else {
             Intent intent = new Intent(getActivity(), ReaderActivity.class);
-            intent.putExtra(ReaderFragment.PARAM_FILE, file.getAbsolutePath());
+            intent.putExtra(ReaderFragment.PARAM_HANDLER, file);
+            intent.putExtra(ReaderFragment.PARAM_MODE, ReaderFragment.Mode.MODE_BROWSER);
             startActivity(intent);
         }
     }

@@ -4,13 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.*;
 import android.support.v7.widget.SearchView;
@@ -33,7 +30,7 @@ public class LibraryBrowserFragment extends Fragment
     private ArrayList<Comic> mComics;
     private ArrayList<Integer> mDisplayedIndexes;
     private Picasso mPicasso;
-    private Comic mCurrentComic;
+    private int mCurrentComicIndex = -1;
     private String mFilterSearch = "";
     private int mFilterRead = R.id.menu_browser_filter_all;
 
@@ -83,14 +80,15 @@ public class LibraryBrowserFragment extends Fragment
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ReaderFragment.RESULT) {
-            int curPage = data.getIntExtra(ReaderFragment.RESULT_CURRENT_PAGE, -1);
-            if (curPage != -1 && mCurrentComic != null) {
-                mCurrentComic.setCurrentPage(curPage);
-                mGridView.invalidateViews();
-            }
+    public void onResume() {
+        if (mCurrentComicIndex != -1) {
+            Comic currentComic = mComics.get(mCurrentComicIndex);
+            Comic updatedComic = Storage.getStorage(getActivity()).getComic(currentComic.getId());
+            mComics.set(mCurrentComicIndex, updatedComic);
+            mCurrentComicIndex = -1;
+            mGridView.invalidateViews();
         }
+        super.onResume();
     }
 
     @Override
@@ -134,13 +132,12 @@ public class LibraryBrowserFragment extends Fragment
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Comic comic = mComics.get(mDisplayedIndexes.get(position));
+        mCurrentComicIndex = mDisplayedIndexes.get(position);
 
         Intent intent = new Intent(getActivity(), ReaderActivity.class);
-        intent.putExtra(ReaderFragment.PARAM_FILE, comic.getFile().getAbsolutePath());
-        intent.putExtra(ReaderFragment.PARAM_PAGE, comic.getCurrentPage());
-        startActivityForResult(intent, ReaderFragment.RESULT);
-
-        mCurrentComic = comic;
+        intent.putExtra(ReaderFragment.PARAM_HANDLER, comic.getId());
+        intent.putExtra(ReaderFragment.PARAM_MODE, ReaderFragment.Mode.MODE_LIBRARY);
+        startActivity(intent);
     }
 
     private void filterContent() {
