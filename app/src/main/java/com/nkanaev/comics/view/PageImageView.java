@@ -39,6 +39,20 @@ public class PageImageView extends ImageView {
 
     public void setViewMode(Constants.PageViewMode viewMode) {
         mViewMode = viewMode;
+        mEdited = false;
+        requestLayout();
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        scale();
+    }
+
+    @Override
+    protected boolean setFrame(int l, int t, int r, int b) {
+        scale();
+        return super.setFrame(l, t, r, b);
     }
 
     private void init() {
@@ -61,23 +75,12 @@ public class PageImageView extends ImageView {
 
         mScroller = new OverScroller(getContext());
         mScroller.setFriction(ViewConfiguration.getScrollFriction() * 2);
+        mViewMode = Constants.PageViewMode.ASPECT_FIT;
     }
 
     @Override
     public void setOnTouchListener(OnTouchListener l) {
         mOuterTouchListener = l;
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        scale();
-    }
-
-    @Override
-    public void setImageDrawable(Drawable drawable) {
-        super.setImageDrawable(drawable);
-        scale();
     }
 
     private void scale() {
@@ -295,11 +298,9 @@ public class PageImageView extends ImageView {
         float offsetX = computeCurrentOffset().x;
 
         if (offsetX >= 0 && direction < 0) {
-            int z = 0;
             return false;
         }
         else if (Math.abs(offsetX) + getWidth() >= imageWidth && direction > 0) {
-            int z = 0;
             return false;
         }
         return true;
