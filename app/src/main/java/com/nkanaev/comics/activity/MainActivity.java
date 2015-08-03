@@ -1,8 +1,8 @@
 package com.nkanaev.comics.activity;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 
+import com.squareup.picasso.Picasso;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.aboutlibraries.entity.Library;
 import com.mikepenz.aboutlibraries.ui.LibsFragment;
@@ -22,8 +23,6 @@ import com.nkanaev.comics.fragment.BrowserFragment;
 import com.nkanaev.comics.fragment.LibraryFragment;
 import com.nkanaev.comics.R;
 import com.nkanaev.comics.managers.LocalCoverHandler;
-import com.squareup.picasso.LruCache;
-import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -150,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                         setFragment(new BrowserFragment());
                         break;
                     case R.id.drawer_menu_about:
+                        setTitle(R.string.menu_about);
                         setFragment(createAboutFragment());
                         break;
                 }
