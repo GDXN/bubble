@@ -96,18 +96,17 @@ public class PageImageView extends ImageView {
 
         if (mViewMode == Constants.PageViewMode.ASPECT_FILL) {
             float scale;
-            float dx = 0, dy = 0;
+            float dx = 0;
 
             if (dwidth * vheight > vwidth * dheight) {
                 scale = (float) vheight / (float) dheight;
                 dx = (vwidth - dwidth * scale) * 0.5f;
             } else {
                 scale = (float) vwidth / (float) dwidth;
-                dy = (vheight - dheight * scale) * 0.5f;
             }
 
             mImageMatrix.setScale(scale, scale);
-            mImageMatrix.postTranslate((int) (dx + 0.5f), (int) (dy + 0.5f));
+            mImageMatrix.postTranslate((int) (dx + 0.5f), 0);
         }
         else if (mViewMode == Constants.PageViewMode.ASPECT_FIT) {
             RectF mTempSrc = new RectF(0, 0, dwidth, dheight);
