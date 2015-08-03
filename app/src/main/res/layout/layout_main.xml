@@ -25,7 +25,7 @@
                 android:id="@+id/content_frame"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:foreground="?android:windowContentOverlay"/>
+                android:background="@color/background"/>
 
     </android.support.design.widget.AppBarLayout>
 
