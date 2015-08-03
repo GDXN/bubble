@@ -1,6 +1,6 @@
 # Bubble
 
-![screenshot](https://raw.githubusercontent.com/nkanaev/bubble/master/promo.jpg)
+![promo](https://raw.githubusercontent.com/nkanaev/bubble/master/art/promo.jpg)
 
 Android comic book reader.
 
