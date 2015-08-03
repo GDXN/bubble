@@ -2,7 +2,6 @@ package com.nkanaev.comics.fragment;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -24,14 +23,15 @@ public class BrowserFragment extends Fragment
     private ListView mListView;
     private File mCurrentDir;
     private File mRootDir;
-    private File[] mSubdirs;
+    private File[] mSubdirs = new File[]{};
+    private TextView mDirTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mRootDir = Environment.getExternalStorageDirectory();
-        setCurrentDir(mRootDir);
+        mCurrentDir = mRootDir;
 
         getActivity().setTitle(R.string.menu_browser);
     }
@@ -40,11 +40,26 @@ public class BrowserFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_browser, container, false);
 
+        ViewGroup toolbar = (ViewGroup) getActivity().findViewById(R.id.toolbar);
+        ViewGroup breadcrumbLayout = (ViewGroup) inflater.inflate(R.layout.breadcrumb, toolbar, false);
+        toolbar.addView(breadcrumbLayout);
+        mDirTextView = (TextView) breadcrumbLayout.findViewById(R.id.dir_textview);
+
+        setCurrentDir(mCurrentDir);
+
         mListView = (ListView) view.findViewById(R.id.listview_browser);
         mListView.setAdapter(new DirectoryAdapter());
         mListView.setOnItemClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        ViewGroup toolbar = (ViewGroup) getActivity().findViewById(R.id.toolbar);
+        ViewGroup breadcrumb = (ViewGroup) toolbar.findViewById(R.id.breadcrumb_layout);
+        toolbar.removeView(breadcrumb);
+        super.onDestroyView();
     }
 
     private void setCurrentDir(File dir) {
@@ -64,6 +79,9 @@ public class BrowserFragment extends Fragment
         if (mListView != null) {
             mListView.invalidateViews();
         }
+
+        String relPath = mRootDir.toURI().relativize(mCurrentDir.toURI()).getPath();
+        mDirTextView.setText("/" + relPath);
     }
 
     @Override

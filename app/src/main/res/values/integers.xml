@@ -23,4 +23,6 @@
     <dimen name="card_text">18sp</dimen>
     <dimen name="card_subtext">14sp</dimen>
     <dimen name="card_padding">8dp</dimen>
+
+    <dimen name="toolbar_inset">72dp</dimen>
 </resources>

@@ -15,11 +15,11 @@
         <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
+                android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
                 android:minHeight="?attr/actionBarSize"
-                app:contentInsetLeft="72dp"
-                app:contentInsetStart="72dp"/>
+                app:contentInsetLeft="@dimen/toolbar_inset"
+                app:contentInsetStart="@dimen/toolbar_inset"/>
 
         <FrameLayout
                 android:id="@+id/content_frame"
