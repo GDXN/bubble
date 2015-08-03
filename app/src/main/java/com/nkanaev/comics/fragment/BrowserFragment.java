@@ -20,6 +20,8 @@ import java.util.Collections;
 
 public class BrowserFragment extends Fragment
         implements AdapterView.OnItemClickListener {
+    private final static String STATE_CURRENT_DIR = "stateCurrentDir";
+
     private ListView mListView;
     private File mCurrentDir;
     private File mRootDir;
@@ -31,7 +33,12 @@ public class BrowserFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         mRootDir = Environment.getExternalStorageDirectory();
-        mCurrentDir = mRootDir;
+        if (savedInstanceState != null) {
+            mCurrentDir = (File) savedInstanceState.getSerializable(STATE_CURRENT_DIR);
+        }
+        else {
+            mCurrentDir = mRootDir;
+        }
 
         getActivity().setTitle(R.string.menu_browser);
     }
@@ -52,6 +59,12 @@ public class BrowserFragment extends Fragment
         mListView.setOnItemClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(STATE_CURRENT_DIR, mCurrentDir);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
