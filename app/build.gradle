@@ -11,10 +11,16 @@ android {
     compileSdkVersion 22
     buildToolsVersion '22.0.1'
 
+    def Properties versionProps = new Properties()
+    versionProps.load(new FileInputStream(file('version.properties')))
+
     defaultConfig {
         applicationId "com.nkanaev.comics"
         minSdkVersion 16
         targetSdkVersion 22
+
+        versionName versionProps['name']
+        versionCode versionProps['code'].toInteger()
     }
 
     packagingOptions {
