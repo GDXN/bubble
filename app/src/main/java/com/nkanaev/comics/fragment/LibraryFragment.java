@@ -123,6 +123,7 @@ public class LibraryFragment extends Fragment
 
     @Override
     public void onDirectorySelect(File file) {
+        mFirstLaunch = false;
         mRefreshLayout.setEnabled(true);
 
         SharedPreferences preferences = getActivity()
